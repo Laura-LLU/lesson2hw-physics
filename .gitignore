@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.cache/
+.DS_Store
+.env
+.env.*
+dist/
+qa/
+output/
+*.pdf
+*.zip

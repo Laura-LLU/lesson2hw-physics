@@ -1,0 +1,1 @@
+-r skill/lesson2hw-physics/scripts/requirements.txt
