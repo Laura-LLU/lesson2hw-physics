@@ -4,9 +4,9 @@
 
 面向Codex、Claude Code、WorkBuddy等AI Agent的开源技能。老师无需自建题库、配置Python或填写本项目API Key；Agent使用内置题库索引，筛选已教范围内的题目，生成独立的学生卷和答案卷，供老师复核。
 
-**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.5/lesson2hw-physics-0.5.5-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.5/lesson2hw-physics-0.5.5-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.5)**
+**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.6/lesson2hw-physics-0.5.6-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.6/lesson2hw-physics-0.5.6-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.6)**
 
-当前为 **v0.5.5 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
+当前为 **v0.5.6 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
 
 ## 老师只需一句话安装
 
@@ -75,7 +75,7 @@ Agent需要文件读写、命令执行、联网取题、完整图像阅读和PDF
 
 ## 验证状态
 
-已完成23项本地单元检查、通用Skill元数据检查、ZIP完整性和跨位置索引初始化。前身版本已在Mac空白工作目录自动准备环境，并分别用两门课程真实题答生成和查看作业/答案。本版本已从通用技能ZIP换目录初始化两门题库，并各生成和检查一套真实学生卷/答案卷。
+已完成27项本地单元检查、通用Skill元数据检查、ZIP完整性和跨位置索引初始化。前身版本已在Mac空白工作目录自动准备环境，并分别用两门课程真实题答生成和查看作业/答案。本版本已从通用技能ZIP换目录初始化两门题库，并各生成和检查一套真实学生卷/答案卷。
 
 尚未完成：各Agent客户端逐一实装、另一台Mac/Windows实机、真实教师PPT/板书理解系统评测和课堂效果。不能把代码测试通过当作AI选题永远正确。详见[测试状态](docs/测试状态.md)。
 
@@ -90,3 +90,5 @@ Agent需要文件读写、命令执行、联网取题、完整图像阅读和PDF
 ---
 
 **English:** Lesson2HW Physics turns board photos, lesson slides, PDF courseware, or a short request into curriculum-aligned physics homework and a separate answer PDF through a capable AI agent. It bundles metadata for 4,330 Cambridge 9702 and 2,256 Cambridge 0625 questions; paired images are fetched on demand. Standard Agent Skill core, optional WorkBuddy packaging, MIT code. Early preview: host-specific installation and lesson-understanding quality still require validation.
+
+作业自动按教学内容命名，例如 `0625_力与运动_作业.pdf` 和 `0625_力与运动_答案.pdf`，方便查找；更新只影响之后生成的文件，旧文件不会自动改名。WorkBuddy商城审核包保持0.5.3不变。

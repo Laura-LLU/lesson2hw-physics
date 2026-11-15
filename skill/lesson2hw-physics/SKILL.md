@@ -2,7 +2,7 @@
 name: lesson2hw-physics
 description: "根据板书、PPT、PDF课件或一句话生成9702/0625物理作业。内置两课6586题索引，首次自动准备环境并按需缓存题目与答案，输出学生卷和答案卷；老师无需自备题库或填写路径。"
 license: MIT
-metadata: {"author": "LauraPhysics", "version": "0.5.5", "display_name": "Lesson2HW Physics｜课后有题", "workbuddy": {"display_name": "Lesson2HW Physics｜课后有题", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，按板书、PPT、PDF或一句话出作业；0625仅用Paper2/4/6（目前内置2/4，Paper6素材待补）。首次联网自动准备。", "description_en": "Homework from lesson material. 0625 components 2/4/6 only; built-in 0625 material currently covers 2/4. Automatic first-run setup.", "version": "0.5.5", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation.", "0625 Extended speed-time graphs: six MCQs and two structured questions, excluding energy."]}}
+metadata: {"author": "LauraPhysics", "version": "0.5.6", "display_name": "Lesson2HW Physics｜课后有题", "workbuddy": {"display_name": "Lesson2HW Physics｜课后有题", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，按板书、PPT、PDF或一句话出作业；0625仅用Paper2/4/6（目前内置2/4，Paper6素材待补）。首次联网自动准备。", "description_en": "Homework from lesson material. 0625 components 2/4/6 only; built-in 0625 material currently covers 2/4. Automatic first-run setup.", "version": "0.5.6", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation.", "0625 Extended speed-time graphs: six MCQs and two structured questions, excluding energy."]}}
 ---
 
 # Lesson2HW Physics｜课后有题：9702 / 0625物理
@@ -58,12 +58,18 @@ A2没有官方MCQ，明确要自编时保留用户意图并标原创，但本版
 
 `bash <skill-dir>/scripts/run.sh export --course 9702 --level A2 --year 2026 --checked --title '<作业标题>' <真实ID...>`
 
-ID的传入顺序即试卷顺序；默认先MCQ后结构题，同类按最近年份优先，除非用户指定顺序。--checked表示已完成语义查看，不是程序证明。输出student.pdf、answers.pdf、selection.json，默认在workspace的课程output新目录。未知分值不捏造，总分仅已知部分；建议限时如未要求可省略，0625不套9702计时。
+ID的传入顺序即试卷顺序；默认先MCQ后结构题，同类按最近年份优先，除非用户指定顺序。--checked表示已完成语义查看，不是程序证明。输出按教学内容命名的学生卷、答案卷和selection.json，默认在workspace的课程output新目录。未知分值不捏造，总分仅已知部分；建议限时如未要求可省略，0625不套9702计时。
 
-运行 `bash <skill-dir>/scripts/run.sh qa <student.pdf> <answers.pdf> --output-dir <本次输出>/qa --contact-only`（Windows用run.ps1 qa），打开全部页面联系图检查：图表未被切断、选项完整、编号与续页正确、不混入下一题、学生卷没有答案、答案卷与选题一致。发现源裁图问题时回原PDF针对性重裁；不要为了排版拉伸图像或误删图表。无法完成视觉验收则标待人工检查，不说通过。
+运行 `bash <skill-dir>/scripts/run.sh qa <实际学生卷路径> <实际答案卷路径> --output-dir <本次输出>/qa --contact-only`（Windows用run.ps1 qa），打开全部页面联系图检查：图表未被切断、选项完整、编号与续页正确、不混入下一题、学生卷没有答案、答案卷与选题一致。发现源裁图问题时回原PDF针对性重裁；不要为了排版拉伸图像或误删图表。无法完成视觉验收则标待人工检查，不说通过。
 
 交付两个真实可打开的PDF链接，简述课程/层级、实际数量、来源、减量及未解决项。所有成品供教师复核；不宣称Cambridge官方背书、保证零错误或适配全部资料。
 
 PDF版式以LauraPhysics.com为准：首面内缩深蓝标题卡+红线、英文卷别与姓名/班级/日期栏；续页紧凑英文页眉；题目细分隔线与来源；每页保留红色L标、Laura-LLU | github.com/Laura-LLU、课程及当前页/总页数。不要改为平台品牌或中文蓝底题目条。可通过export的--class-name、--student-name、--date、--time-limit传入教师信息。
 
 学生卷每道选择题末尾保留36pt（约12.7mm）空白再开始下一题，空间不足优先整题换页；新页不补多余顶部间距。答案卷保持14pt紧凑间隔。此间距按教师新要求覆盖网站旧版的14pt默认，页眉、页脚和其他版式继续沿用。
+
+## 按教学内容命名
+
+从老师的本次要求或确认过的课件范围提炼简短、具体的主题，并通过export的--title传入，例如“力与运动”“速度—时间图”“圆周运动”。教师明确给定标题时优先采用，不使用课件路径、文件名、整段提示词或未教内容充当主题。不为命名额外提问；多主题作业可用“力与运动综合练习”等概括。
+
+导出文件默认是“课程代码_主题_作业.pdf”和“课程代码_主题_答案.pdf”，例如0625_力与运动_作业.pdf；试卷内标题使用同一主题。脚本未收到--title时从已选题的Topic标签提取后备名称，不承诺脚本能理解教师原始提示。脚本返回真实文件路径，验收与交付必须使用该路径，不能继续假定student.pdf/answers.pdf。输出目录含主题与时间以区分多次出卷，已有文件不覆盖；不额外复制旧名文件。文件名不包含学生姓名、完整提示词或课件本地路径。

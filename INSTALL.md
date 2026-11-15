@@ -33,7 +33,7 @@ install-skill-from-github.py --repo Laura-LLU/lesson2hw-physics --path skill/les
 
 ## WorkBuddy
 
-下载Release中的lesson2hw-physics-0.5.5-workbuddy.zip，使用当前客户端的本地技能导入功能安装。该包适配展示字段，题库和运行代码与通用包一致。核对技能可见后实际调用一次；尚无本项目在该客户端的独立验收记录。
+下载Release中的lesson2hw-physics-0.5.6-workbuddy.zip，使用当前客户端的本地技能导入功能安装。该包适配展示字段，题库和运行代码与通用包一致。核对技能可见后实际调用一次；尚无本项目在该客户端的独立验收记录。
 
 ## 其他Agent
 
@@ -44,7 +44,7 @@ install-skill-from-github.py --repo Laura-LLU/lesson2hw-physics --path skill/les
 1. Agent定位实际技能目录，确认可读写文件、执行命令、联网并查看图像/PDF。
 2. Mac/Linux通过bash scripts/run.sh info --course 9702（或0625）自动准备独立环境，Windows用PowerShell执行scripts/run.ps1。
 3. 看到9702 4330题或0625 2256题，再根据教师要求search、查看完整题答、export和qa。
-4. 交付可打开的student.pdf和answers.pdf，说明实际数量、课程范围和待复核项。仅初始化成功不算完成出卷。
+4. 交付按教学内容命名的学生卷和答案卷（使用脚本返回的真实路径），说明实际数量、课程范围和待复核项。仅初始化成功不算完成出卷。
 
 首次环境及素材下载需要网络和宿主正常授权；不需要老师自建题库、配置Python或本项目API Key。模型订阅/额度由当前Agent提供。
 

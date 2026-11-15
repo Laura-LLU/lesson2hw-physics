@@ -1,6 +1,6 @@
 """Course-aware, local-only question-bank adapter, search and paired PDF export."""
 from pathlib import Path
-import json, argparse, re, datetime, os, sys
+import json, argparse, re, datetime, os, sys, unicodedata
 
 HERE=Path(__file__).resolve().parent
 PROFILES=json.loads((HERE.parent/'references/course-profiles.json').read_text())
@@ -26,6 +26,19 @@ def topic_matches(query, label):
         target=re.match(r"^(?:Topic\s+)?(\d+(?:\.\d+|[A-Z])?)(?:\s|[·:]|$)",label,re.I)
         return bool(target and target[1].casefold()==code[1].casefold())
     return q.casefold() in label.casefold()
+
+def export_title(value, selected):
+    if value and value.strip():return value.strip()[:180]
+    topics=list(dict.fromkeys(str(t).strip() for row in selected for t in row.get('topics',[]) if str(t).strip()))
+    return ('与'.join(topics[:2])+('等综合练习' if len(topics)>2 else ''))[:180] or '物理综合练习'
+
+def output_names(course, title):
+    # Keep Unicode for teachers; replace characters unsafe on macOS/Windows.
+    topic=unicodedata.normalize('NFC',title)
+    topic=''.join('_' if unicodedata.category(c).startswith('C') else c for c in topic)
+    topic=re.sub(r'[<>:"/\\|?*\s]+','_',topic).strip(' ._')[:60].rstrip(' ._') or '物理综合练习'
+    stem=course+'_'+topic
+    return stem+'_作业.pdf',stem+'_答案.pdf'
 
 def normalize(course, row, source):
     q=dict(row)
@@ -131,7 +144,7 @@ def main():
     search.add_argument('--kind',choices=['mcq','structured']);search.add_argument('--limit',type=int,default=20)
     search.add_argument('--exclude-id',action='append',default=[]);search.add_argument('--include-used',action='store_true')
     export=sub.add_parser('export');export.add_argument('--course',choices=PROFILES,required=True);export.add_argument('--level',required=True)
-    export.add_argument('--year',type=int,required=True);export.add_argument('--title',default='Physics Homework');export.add_argument('--checked',action='store_true')
+    export.add_argument('--year',type=int,required=True);export.add_argument('--title',help='Short lesson topic; inferred from selected topics when omitted');export.add_argument('--checked',action='store_true')
     export.add_argument('--output-dir');export.add_argument('--class-name',default='');export.add_argument('--student-name',default='');export.add_argument('--date',default=datetime.date.today().isoformat());export.add_argument('--time-limit',default='');export.add_argument('ids',nargs='+')
     info=sub.add_parser('info');info.add_argument('--course',choices=PROFILES,required=True)
     args=ap.parse_args();workspace=Path(args.workspace).expanduser().resolve()
@@ -182,9 +195,11 @@ def main():
     import pdf_engine
     pdf_engine.CURRENT_COURSE=args.course
     sources=[Path(r[k]).resolve() for r in rows for k in ['question_image','answer_image']]
-    out=Path(args.output_dir).expanduser().resolve() if args.output_dir else workspace/args.course/'output'/datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+    title=export_title(args.title,selected)
+    student_name,answer_name=output_names(args.course,title)
+    out=Path(args.output_dir).expanduser().resolve() if args.output_dir else workspace/args.course/'output'/(Path(student_name).stem+'_'+datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
     if any(p==out or out in p.parents for p in sources):raise ValueError('Output directory overlaps source assets')
-    if any((out/n).exists() for n in ['student.pdf','answers.pdf','selection.json']):raise ValueError('Do not overwrite existing output')
+    if any((out/n).exists() for n in [student_name,answer_name,'selection.json']):raise ValueError('Do not overwrite existing output')
     for r in selected:
         for k in ['question_image','answer_image']:
             if not Path(r[k]).is_file():raise FileNotFoundError('Missing selected asset')
@@ -192,13 +207,13 @@ def main():
     pdf_engine.BANK_ROOT=Path(os.path.commonpath([str(p.parent) for p in sources]))
     out.mkdir(parents=True,exist_ok=True)
     metadata={'className':args.class_name,'studentName':args.student_name,'dueDate':args.date,'timeLimit':args.time_limit,'showSource':True,'totalMarks':sum(r['marks'] or 0 for r in selected),'marksIncomplete':sum(r['marks'] is None for r in selected)}
-    for answer,name in [(False,'student.pdf'),(True,'answers.pdf')]:pdf_engine.build_pdf(selected,out/name,args.title[:180],metadata,answer)
-    selection={'course':args.course,'level':args.level,'syllabus_year':args.year,'title':args.title,'ids':args.ids,
+    for answer,name in [(False,student_name),(True,answer_name)]:pdf_engine.build_pdf(selected,out/name,title,metadata,answer)
+    selection={'course':args.course,'level':args.level,'syllabus_year':args.year,'title':title,'files':{'student':student_name,'answers':answer_name},'ids':args.ids,
                'sources':[r['source_ref'] for r in selected],'teacher_review_required':True}
     (out/'selection.json').write_text(json.dumps(selection,ensure_ascii=False,indent=2))
     history.parent.mkdir(parents=True,exist_ok=True)
     with history.open('a') as f:f.write(json.dumps(selection,ensure_ascii=False)+'\n')
-    print(json.dumps({'student':str(out/'student.pdf'),'answers':str(out/'answers.pdf'),'selection':str(out/'selection.json')},ensure_ascii=False,indent=2))
+    print(json.dumps({'student':str(out/student_name),'answers':str(out/answer_name),'selection':str(out/'selection.json')},ensure_ascii=False,indent=2))
 
 if __name__=='__main__':
     try:main()
