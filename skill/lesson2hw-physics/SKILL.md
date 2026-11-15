@@ -2,7 +2,7 @@
 name: lesson2hw-physics
 description: "根据板书、PPT、PDF课件或一句话生成9702/0625物理作业。内置两课6586题索引，首次自动准备环境并按需缓存题目与答案，输出学生卷和答案卷；老师无需自备题库或填写路径。"
 license: MIT
-metadata: {"author": "LauraPhysics", "version": "0.5.3", "display_name": "Lesson2HW Physics｜课后有题", "workbuddy": {"display_name": "Lesson2HW Physics｜课后有题", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，首次联网自动准备，根据板书、PPT、PDF课件或一句话选题出卷；不需老师自建题库。", "description_en": "Built-in 9702/0625 bank metadata, automatic first-run setup, and on-demand paired materials for homework generation.", "version": "0.5.3", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation.", "0625 Extended speed-time graphs: six MCQs and two structured questions, excluding energy."]}}
+metadata: {"author": "LauraPhysics", "version": "0.5.4", "display_name": "Lesson2HW Physics｜课后有题", "workbuddy": {"display_name": "Lesson2HW Physics｜课后有题", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，按板书、PPT、PDF或一句话出作业；0625仅用Paper2/4/6（目前内置2/4，Paper6素材待补）。首次联网自动准备。", "description_en": "Homework from lesson material. 0625 components 2/4/6 only; built-in 0625 material currently covers 2/4. Automatic first-run setup.", "version": "0.5.4", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation.", "0625 Extended speed-time graphs: six MCQs and two structured questions, excluding energy."]}}
 ---
 
 # Lesson2HW Physics｜课后有题：9702 / 0625物理
@@ -23,7 +23,7 @@ metadata: {"author": "LauraPhysics", "version": "0.5.3", "display_name": "Lesson
 
 Mac/Linux使用 `bash <skill-dir>/scripts/run.sh <命令参数>`；Windows使用PowerShell执行 `scripts/run.ps1 <命令参数>`。入口自动建立独立Python环境并安装依赖，不修改系统Python或shell配置、不使用sudo、不关闭安全保护。若宿主/系统要求操作授权，请只说明必要操作；不得让老师手动填写配置。首次可执行 `info --course 9702` 或0625检查内置索引。
 
-首次只在课程不明确时询问“你教9702还是0625”。已有课程上下文则沿用，不重复询问。9702按板书/Topic判定AS、A2或实验；0625当前内置题库为Extended Paper2/4，默认明确告知使用Extended；若用户需要Core或实验而相应素材不存在，如实说明，不伪装已支持该题库。通用分流规则保留，用户主动提供额外资料时才使用高级绑定流程。
+首次只在课程不明确时询问“你教9702还是0625”。已有课程上下文则沿用，不重复询问。9702按板书/Topic判定AS、A2或实验；0625本项目只允许Paper2/4/6，禁止Paper1/3/5；理论题按Extended Paper2/4，实验技能只走P6。当前内置只有Paper2/4，缺Paper6素材时明确说明，不用Paper5替代、不编造已支持。自有题库和旧缓存也执行同一白名单，不再提供Core或P5分支。
 
 索引初始化、Python和题目图片这些内部步骤由Agent处理，教师不需要理解。准备失败必须报告具体阻碍，不把失败变成“请你自己找题库”。没有额外素材时也不得退回要求老师自备题库的旧默认流程。
 

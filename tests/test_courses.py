@@ -10,7 +10,8 @@ class CourseRules(unittest.TestCase):
         self.assertEqual(allowed('9702','A2'),{'4'})
         self.assertNotIn('1',allowed('9702','A2'))
     def test_core_extended(self):
-        self.assertEqual(allowed('0625','Core'),{'1','3'})
+        with self.assertRaises(ValueError):allowed('0625','Core')
+        with self.assertRaises(ValueError):allowed('0625','P5')
         self.assertEqual(allowed('0625','Extended'),{'2','4'})
     def test_practical_differs(self):
         self.assertEqual(allowed('9702','P3'),{'3'})

@@ -44,26 +44,12 @@
       2028
     ],
     "levels": {
-      "Core": {
-        "mcq": [
-          "1"
-        ],
-        "structured": [
-          "3"
-        ]
-      },
       "Extended": {
         "mcq": [
           "2"
         ],
         "structured": [
           "4"
-        ]
-      },
-      "P5": {
-        "mcq": [],
-        "structured": [
-          "5"
         ]
       },
       "P6": {
@@ -73,6 +59,11 @@
         ]
       }
     },
-    "syllabus": "https://www.cambridgeinternational.org/Images/697209-2026-2028-syllabus.pdf"
+    "syllabus": "https://www.cambridgeinternational.org/Images/697209-2026-2028-syllabus.pdf",
+    "allowed_papers": [
+      "2",
+      "4",
+      "6"
+    ]
   }
 }

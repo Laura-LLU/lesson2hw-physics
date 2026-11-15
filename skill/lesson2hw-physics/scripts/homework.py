@@ -4,6 +4,7 @@ import json, argparse, re, datetime, os, sys
 
 HERE=Path(__file__).resolve().parent
 PROFILES=json.loads((HERE.parent/'references/course-profiles.json').read_text())
+IGCSE_PAPERS=frozenset({'2','4','6'})
 
 def read(path):
     return json.loads(Path(path).read_text(encoding='utf-8'))
@@ -30,7 +31,9 @@ def normalize(course, row, source):
     q=dict(row)
     if str(q.get('course',course))!=course:raise ValueError('Cross-course bank record')
     q['course']=course;q['paper']=paper_num(q['paper'])
-    kinds={'9702':{'1':'mcq'},'0625':{'1':'mcq','2':'mcq'}}
+    if course=='0625' and q['paper'] not in IGCSE_PAPERS:
+        raise ValueError('本项目0625只允许Paper 2、4、6，不接收Paper 1、3、5')
+    kinds={'9702':{'1':'mcq'},'0625':{'2':'mcq'}}
     expected=kinds[course].get(q['paper'],'structured')
     if q.get('kind',expected)!=expected:raise ValueError('Question kind conflicts with paper')
     q['kind']=expected
@@ -100,14 +103,23 @@ def import_bank(course, source):
 
 def allowed(course,level):
     try:p=PROFILES[course]['levels'][level]
-    except KeyError:raise ValueError('Level does not belong to selected course')
-    return set(p['mcq']+p['structured'])
+    except KeyError:
+        if course=='0625':raise ValueError('本项目0625只支持Extended（Paper 2/4）或P6（Paper 6）')
+        raise ValueError('Level does not belong to selected course')
+    papers=set(p['mcq']+p['structured'])
+    if course=='0625' and not papers.issubset(IGCSE_PAPERS):raise ValueError('0625 paper policy violation')
+    return papers
 
 def load_bank(workspace,course):
     from builtin_bank import ensure_index
     data=read(ensure_index(workspace,course))
     if data['course']!=course:raise ValueError('Cross-course bank file')
-    return data['questions']
+    rows=data['questions']
+    if course=='0625':
+        filtered=[r for r in rows if paper_num(r['paper']) in IGCSE_PAPERS]
+        if len(filtered)!=len(rows):print('本项目0625只用Paper 2/4/6，已排除旧索引中的'+str(len(rows)-len(filtered))+'道其他卷型题；原索引保留不变。',file=sys.stderr)
+        return filtered
+    return rows
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
@@ -136,7 +148,8 @@ def main():
     if args.cmd=='info':
         from collections import Counter
         print(json.dumps({'course':args.course,'count':len(rows),'papers':dict(Counter(r['paper'] for r in rows)),
-                          'syllabus_years':PROFILES[args.course]['years'],'levels':list(PROFILES[args.course]['levels'])},ensure_ascii=False,indent=2));return
+                          'syllabus_years':PROFILES[args.course]['years'],'levels':list(PROFILES[args.course]['levels']),
+                          **({'allowed_papers':['2','4','6'],'missing_papers':sorted(IGCSE_PAPERS-{r['paper'] for r in rows})} if args.course=='0625' else {})},ensure_ascii=False,indent=2));return
     papers=allowed(args.course,args.level)
     history=workspace/args.course/'history.jsonl'
     if args.cmd=='search':
@@ -156,7 +169,7 @@ def main():
         from builtin_bank import ensure_assets
         ensure_assets(matches[:max(0,args.limit)])
         print(json.dumps({'matches':len(matches),'candidates':matches[:max(0,args.limit)],
-                          'note':'Tags only shortlist. Inspect complete questions and answers against the lesson boundary.'},ensure_ascii=False,indent=2));return
+                          'note':('当前题库没有0625 Paper 6素材，不能生成该卷；不得用其他卷替代。' if args.course=='0625' and args.level=='P6' and not any(r['paper']=='6' for r in rows) else 'Tags only shortlist. Inspect complete questions and answers against the lesson boundary.')},ensure_ascii=False,indent=2));return
     if not args.checked:raise ValueError('Inspect complete questions, answers and lesson boundaries first; then use --checked')
     if args.year not in PROFILES[args.course]['years']:raise ValueError('Syllabus year not supported by this course profile')
     if not 1<=len(args.ids)<=80 or len(args.ids)!=len(set(args.ids)):raise ValueError('Choose 1-80 unique IDs')

@@ -6,7 +6,7 @@
 
 ## 已有题库
 
-CLI `prepare --course <9702或0625> --source-root <题库根目录>` 支持本项目既有9702/0625本地数据结构，以及标准 `catalog.json` 题库。题库只读；工作索引写到workspace，不移动原素材。默认workspace为当前用户 `~/codex/lesson2hw-physics`，可通过CLI的 `--workspace` 指定本机位置。info查看课程、题量及组件覆盖；没有Core题时如实说明，不把Extended卷冒充Core。
+CLI `prepare --course <9702或0625> --source-root <题库根目录>` 支持本项目既有9702/0625本地数据结构，以及标准 `catalog.json` 题库。题库只读；工作索引写到workspace，不移动原素材。默认workspace为当前用户 `~/codex/lesson2hw-physics`，可通过CLI的 `--workspace` 指定本机位置。info查看课程、题量及组件覆盖；0625自有题库也只接收Paper2/4/6，排除Paper1/3/5；当前缺Paper6时如实说明。
 
 ## 只有QP/MS PDF
 
