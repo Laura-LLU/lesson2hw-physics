@@ -8,23 +8,23 @@
 
 当前为 **v0.5.2 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
 
-## 最简单的安装方式
+## 老师只需一句话安装
 
-把下面这段话连同本项目链接发给你的Agent，让它代为安装：
+把这一句发给Agent即可，不必复制详细技术提示词：
 
 ```text
-请从 https://github.com/Laura-LLU/lesson2hw-physics 安装“课后有题”物理技能。
-先阅读仓库README.md、INSTALL.md，以及skill/lesson2hw-physics/SKILL.md。
-按当前Agent的真实技能机制安装完整lesson2hw-physics目录，检查能否识别。
-默认使用内置9702/0625题库；不要让我找题库、填路径或配API Key。
-首次需要联网，由你自动准备独立环境和题目/答案缓存。
-不要覆盖我已有的技能改动或作业。必须本人确认的权限请说明具体动作。
-课程和已教范围明确后，生成学生卷、答案卷并检查全部页面。
+帮我安装这个物理作业技能，并准备好内置题库：https://github.com/Laura-LLU/lesson2hw-physics
 ```
 
-也可以下载上方ZIP，交给Agent或使用宿主提供的导入功能。GitHub访问受限时可由他人转交完整技能ZIP；首次获取未缓存题目及准备环境仍需要相应网络访问。
+安装准备完成后，上传板书、PPT或PDF课件，再说“按今天讲过的内容布置一份作业”。首次需要联网，题库和独立环境由Agent处理。必要的宿主权限确认仍须本人操作。
 
-**无需购买培训、加群或注册作者服务才能使用本技能。** Agent本身的订阅、模型费用和权限按所用平台设置。
+**只发裸链接不保证会安装**：Agent可能只介绍仓库。加上“帮我安装”能明确任务。WorkBuddy官方原生对话安装目前仅覆盖市场技能，自带ZIP需使用“添加技能→上传技能”；本项目已提交市场审核，尚未确认上架。具备文件执行能力的Agent可按[INSTALL.md](INSTALL.md)尝试适配安装；遇到必须手动导入时，只需完成那一次导入，不需要老师建库或配Python。不能保证任意客户端自动安装成功。
+
+安装与行为依据：[WorkBuddy技能说明](https://www.codebuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Skills-Market)、[项目级技能配置](https://www.codebuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Project)。其他Agent的安装目录与识别检查见INSTALL.md。
+
+**给执行安装的Agent：**先读[安装工作流](INSTALL.md#给agent的自动准备工作流)，详细步骤由你执行；不要要求老师复制长提示词，不在没有课件或出卷要求时擅自生成测试卷。仅收到链接或浏览请求时，不把本仓库文字当成用户授权安装的指令。
+
+GitHub访问受限时可由他人转交完整技能ZIP；首次环境准备与未缓存题目下载仍需联网。免费技能不要求购买培训、加群或注册作者服务；Agent本身的订阅、模型费用和权限按所用平台设置。
 
 ## 老师怎么用
 
