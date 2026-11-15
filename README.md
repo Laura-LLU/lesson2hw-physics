@@ -4,9 +4,9 @@
 
 面向Codex、Claude Code、WorkBuddy等AI Agent的开源技能。老师无需自建题库、配置Python或填写本项目API Key；Agent使用内置题库索引，筛选已教范围内的题目，生成独立的学生卷和答案卷，供老师复核。
 
-**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.1/lesson2hw-physics-0.5.1-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.1/lesson2hw-physics-0.5.1-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.1)**
+**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.2/lesson2hw-physics-0.5.2-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.2/lesson2hw-physics-0.5.2-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.2)**
 
-当前为 **v0.5.1 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
+当前为 **v0.5.2 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
 
 ## 最简单的安装方式
 

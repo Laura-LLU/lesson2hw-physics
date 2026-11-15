@@ -10,6 +10,9 @@ def main():
         metadata=json.loads(next(line.split(':',1)[1].strip() for line in header.splitlines() if line.startswith('metadata:')))
         name=next(line.split(':',1)[1].strip() for line in header.splitlines() if line.startswith('name:'))
         description=json.loads(next(line.split(':',1)[1].strip() for line in header.splitlines() if line.startswith('description:')))
+        wb=metadata['workbuddy']
+        if len(wb.get('examples_zh',[]))!=len(wb.get('examples_en',[])):
+            raise SystemExit('WorkBuddy requires matching Chinese and English example counts')
         fields={'name':name,'description':description,**metadata['workbuddy']}
         text='---\n'+'\n'.join(k+': '+json.dumps(v,ensure_ascii=False) for k,v in fields.items())+'\n---'+body
     output=Path(args.output).expanduser().resolve();output.parent.mkdir(parents=True,exist_ok=True)
