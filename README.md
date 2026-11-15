@@ -1,19 +1,19 @@
-# Lesson2HW｜课后有题
+# Lesson2HW Physics｜课后有题
 
 **上传板书、PPT或PDF课件，或说一句要求，生成贴合课堂的物理作业。**
 
 面向Codex、Claude Code、WorkBuddy等AI Agent的开源技能。老师无需自建题库、配置Python或填写本项目API Key；Agent使用内置题库索引，筛选已教范围内的题目，生成独立的学生卷和答案卷，供老师复核。
 
-**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw/releases/download/v0.5.0/lesson2hw-physics-0.5.0-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw/releases/download/v0.5.0/lesson2hw-physics-0.5.0-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw/releases/tag/v0.5.0)**
+**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.1/lesson2hw-physics-0.5.1-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.1/lesson2hw-physics-0.5.1-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.1)**
 
-当前为 **v0.5.0 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
+当前为 **v0.5.1 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
 
 ## 最简单的安装方式
 
 把下面这段话连同本项目链接发给你的Agent，让它代为安装：
 
 ```text
-请从 https://github.com/Laura-LLU/lesson2hw 安装“课后有题”物理技能。
+请从 https://github.com/Laura-LLU/lesson2hw-physics 安装“课后有题”物理技能。
 先阅读仓库README.md、INSTALL.md，以及skill/lesson2hw-physics/SKILL.md。
 按当前Agent的真实技能机制安装完整lesson2hw-physics目录，检查能否识别。
 默认使用内置9702/0625题库；不要让我找题库、填路径或配API Key。
@@ -77,10 +77,10 @@ Agent需要文件读写、命令执行、联网取题、完整图像阅读和PDF
 
 代码及原创规则采用[MIT许可证](LICENSE)，允许使用、修改和商用，保留版权与许可声明。第三方考试材料保留其原有权利与来源条件，不因本项目而成为MIT材料。本项目独立开发，与Cambridge International无隶属或背书关系。
 
-培训、题库适配和学校实施服务可独立开展，免费技能不以购买这些服务为使用前提。[反馈问题](https://github.com/Laura-LLU/lesson2hw/issues/new)时请提供Agent名称、系统、课程及脱敏步骤，不公开学生答卷或凭据。
+培训、题库适配和学校实施服务可独立开展，免费技能不以购买这些服务为使用前提。[反馈问题](https://github.com/Laura-LLU/lesson2hw-physics/issues/new)时请提供Agent名称、系统、课程及脱敏步骤，不公开学生答卷或凭据。
 
 开发：python -m unittest discover -s tests -v；打包：python tools/package_skill.py --output <本机输出目录>/lesson2hw-physics-agent-skill.zip，WorkBuddy包额外加--platform workbuddy。依赖见requirements.txt，输入课件与题库原素材只读。
 
 ---
 
-**English:** Lesson2HW turns board photos, lesson slides, PDF courseware, or a short request into curriculum-aligned physics homework and a separate answer PDF through a capable AI agent. It bundles metadata for 4,330 Cambridge 9702 and 2,256 Cambridge 0625 questions; paired images are fetched on demand. Standard Agent Skill core, optional WorkBuddy packaging, MIT code. Early preview: host-specific installation and lesson-understanding quality still require validation.
+**English:** Lesson2HW Physics turns board photos, lesson slides, PDF courseware, or a short request into curriculum-aligned physics homework and a separate answer PDF through a capable AI agent. It bundles metadata for 4,330 Cambridge 9702 and 2,256 Cambridge 0625 questions; paired images are fetched on demand. Standard Agent Skill core, optional WorkBuddy packaging, MIT code. Early preview: host-specific installation and lesson-understanding quality still require validation.

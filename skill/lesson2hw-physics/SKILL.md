@@ -2,10 +2,10 @@
 name: lesson2hw-physics
 description: "根据板书、PPT、PDF课件或一句话生成9702/0625物理作业。内置两课6586题索引，首次自动准备环境并按需缓存题目与答案，输出学生卷和答案卷；老师无需自备题库或填写路径。"
 license: MIT
-metadata: {"author": "LauraPhysics", "version": "0.5.0", "display_name": "课后有题：9702与0625物理", "workbuddy": {"display_name": "课后有题：9702与0625物理", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，首次联网自动准备，根据板书、PPT、PDF课件或一句话选题出卷；不需老师自建题库。", "description_en": "Built-in 9702/0625 bank metadata, automatic first-run setup, and on-demand paired materials for homework generation.", "version": "0.5.0", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation."]}}
+metadata: {"author": "LauraPhysics", "version": "0.5.1", "display_name": "Lesson2HW Physics｜课后有题", "workbuddy": {"display_name": "Lesson2HW Physics｜课后有题", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，首次联网自动准备，根据板书、PPT、PDF课件或一句话选题出卷；不需老师自建题库。", "description_en": "Built-in 9702/0625 bank metadata, automatic first-run setup, and on-demand paired materials for homework generation.", "version": "0.5.1", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation."]}}
 ---
 
-# Lesson2HW｜课后有题：9702 / 0625物理
+# Lesson2HW Physics｜课后有题：9702 / 0625物理
 
 目标：安装后直接使用内置题库，教师上传板书、PPT、PDF课件或说出章节/难度/题量，即得到独立学生卷和答案卷。Skill负责指导宿主Agent阅读板书、理解教学范围和检查质量；Python脚本负责本地索引、过滤和排版。脚本本身不识别板书或证明物理正确。宿主缺少图像/PDF阅读或本地执行能力时说明阻碍，不假装已执行。
 

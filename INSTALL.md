@@ -4,12 +4,12 @@
 
 ## Codex
 
-告诉Codex：从Laura-LLU/lesson2hw仓库的skill/lesson2hw-physics安装技能。存在原生技能安装工具时优先使用；支持目录安装的版本可以把完整文件夹放在个人~/.agents/skills/或项目.agents/skills/下，实际位置以当前安装器为准。安装后在下一轮或新会话检查是否识别$lesson2hw-physics。文件复制成功不等于已经加载。
+告诉Codex：从Laura-LLU/lesson2hw-physics仓库的skill/lesson2hw-physics安装技能。存在原生技能安装工具时优先使用；支持目录安装的版本可以把完整文件夹放在个人~/.agents/skills/或项目.agents/skills/下，实际位置以当前安装器为准。安装后在下一轮或新会话检查是否识别$lesson2hw-physics。文件复制成功不等于已经加载。
 
 已有Codex官方skill-installer的环境可由Agent使用：
 
 ```text
-install-skill-from-github.py --repo Laura-LLU/lesson2hw --path skill/lesson2hw-physics
+install-skill-from-github.py --repo Laura-LLU/lesson2hw-physics --path skill/lesson2hw-physics
 ```
 
 这是安装器脚本的参数示例，不是要求老师直接输入的全局命令；脚本实际位置由Agent定位。
@@ -20,7 +20,7 @@ install-skill-from-github.py --repo Laura-LLU/lesson2hw --path skill/lesson2hw-p
 
 ## WorkBuddy
 
-下载Release中的lesson2hw-physics-0.5.0-workbuddy.zip，使用当前客户端的本地技能导入功能安装。该包适配展示字段，题库和运行代码与通用包一致。核对技能可见后实际调用一次；尚无本项目在该客户端的独立验收记录。
+下载Release中的lesson2hw-physics-0.5.1-workbuddy.zip，使用当前客户端的本地技能导入功能安装。该包适配展示字段，题库和运行代码与通用包一致。核对技能可见后实际调用一次；尚无本项目在该客户端的独立验收记录。
 
 ## 其他Agent
 

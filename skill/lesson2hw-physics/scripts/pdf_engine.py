@@ -12,7 +12,7 @@ from reportlab.pdfgen import canvas
 BANK_ROOT = Path('.')
 BRAND_NAME = 'LauraPhysics'
 BRAND_URL = 'https://github.com/Laura-LLU'
-BRAND_FOOTER = 'LauraPhysics | Lesson2HW'
+BRAND_FOOTER = 'LauraPhysics | Lesson2HW Physics'
 CURRENT_COURSE = '9702'
 PDF_FONT_NAME = 'PhysicsBankUnicode'
 PDF_FONT_PATH = Path('/System/Library/Fonts/Supplemental/Arial Unicode.ttf')

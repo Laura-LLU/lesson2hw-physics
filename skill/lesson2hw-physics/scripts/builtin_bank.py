@@ -56,7 +56,7 @@ def fetch_one(row,side):
     for origin in PROVIDER['origins']:
         url=get_origin_url(origin,asset)
         try:
-            req=urllib.request.Request(url,headers={'User-Agent':'Lesson2HW/0.5'})
+            req=urllib.request.Request(url,headers={'User-Agent':'Lesson2HW Physics/0.5'})
             with urllib.request.urlopen(req,timeout=25) as response:
                 if urllib.parse.urlsplit(response.geturl()).netloc not in [urllib.parse.urlsplit(x).netloc for x in PROVIDER['origins']]:raise ValueError('Unexpected material redirect')
                 raw=response.read(12*1024*1024+1)
