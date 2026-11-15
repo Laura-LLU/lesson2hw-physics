@@ -42,6 +42,8 @@ def output_names(course, title):
 
 def normalize(course, row, source):
     q=dict(row)
+    # Imported local material is authoritative. Never replace a reviewed crop with the original download.
+    for key in ['source_kind','question_asset','answer_asset']:q.pop(key,None)
     if str(q.get('course',course))!=course:raise ValueError('Cross-course bank record')
     q['course']=course;q['paper']=paper_num(q['paper'])
     if course=='0625' and q['paper'] not in IGCSE_PAPERS:
@@ -145,7 +147,8 @@ def main():
     search.add_argument('--exclude-id',action='append',default=[]);search.add_argument('--include-used',action='store_true')
     export=sub.add_parser('export');export.add_argument('--course',choices=PROFILES,required=True);export.add_argument('--level',required=True)
     export.add_argument('--year',type=int,required=True);export.add_argument('--title',help='Short lesson topic; inferred from selected topics when omitted');export.add_argument('--checked',action='store_true')
-    export.add_argument('--output-dir');export.add_argument('--class-name',default='');export.add_argument('--student-name',default='');export.add_argument('--date',default=datetime.date.today().isoformat());export.add_argument('--time-limit',default='');export.add_argument('ids',nargs='+')
+    export.add_argument('--review-file',help='Agent-reviewed scope, requirements and paired layout geometry');export.add_argument('--output-dir');export.add_argument('--class-name',default='');export.add_argument('--student-name',default='');export.add_argument('--date',default=datetime.date.today().isoformat());export.add_argument('--time-limit',default='');export.add_argument('ids',nargs='+')
+    plan=sub.add_parser('plan');plan.add_argument('--course',choices=PROFILES,required=True);plan.add_argument('--level',required=True);plan.add_argument('--review-file',required=True)
     info=sub.add_parser('info');info.add_argument('--course',choices=PROFILES,required=True)
     args=ap.parse_args();workspace=Path(args.workspace).expanduser().resolve()
     if args.cmd=='prepare':
@@ -165,6 +168,11 @@ def main():
                           **({'allowed_papers':['2','4','6'],'missing_papers':sorted(IGCSE_PAPERS-{r['paper'] for r in rows})} if args.course=='0625' else {})},ensure_ascii=False,indent=2));return
     papers=allowed(args.course,args.level)
     history=workspace/args.course/'history.jsonl'
+    if args.cmd=='plan':
+        from worksheet_plan import choose_plan
+        review=read(args.review_file)
+        selected,validation=choose_plan(args.course,args.level,[r for r in rows if r['paper'] in papers],review)
+        print(json.dumps({'ids':[r['id'] for r in selected],'requirements_check':validation},ensure_ascii=False,indent=2));return
     if args.cmd=='search':
         pattern=re.compile(args.query,re.I) if args.query else None
         excludes=set(args.exclude_id)
@@ -190,8 +198,22 @@ def main():
     if any(i not in by_id for i in args.ids):raise ValueError('Unknown or cross-course ID')
     selected=[by_id[i] for i in args.ids]
     if any(r['paper'] not in papers for r in selected):raise ValueError('Question paper does not match selected course/level')
+    validation=None
+    if args.review_file:
+        review=read(args.review_file)
+        from worksheet_plan import validate_review
+        validation=validate_review(args.course,args.level,selected,review)
+        if not validation['passed']:raise ValueError('Worksheet requirements not met: '+'; '.join(validation['failures']))
+        for r in selected:
+            r.update({k:v for k,v in review['questions'][r['id']].items() if k in ['question_layout','answer_layout']})
+    elif args.time_limit:
+        raise ValueError('A timed worksheet needs --review-file with explicit requirements and scope checks; a printed time label is not a duration check')
+    if args.time_limit and validation and validation['requested_minutes']!=float(args.time_limit):raise ValueError('Printed time differs from reviewed target')
     from builtin_bank import ensure_assets
     ensure_assets(selected)
+    if args.review_file:
+        from worksheet_plan import validate_reviewed_assets
+        validate_reviewed_assets(selected,review)
     import pdf_engine
     pdf_engine.CURRENT_COURSE=args.course
     sources=[Path(r[k]).resolve() for r in rows for k in ['question_image','answer_image']]
@@ -207,9 +229,16 @@ def main():
     pdf_engine.BANK_ROOT=Path(os.path.commonpath([str(p.parent) for p in sources]))
     out.mkdir(parents=True,exist_ok=True)
     metadata={'className':args.class_name,'studentName':args.student_name,'dueDate':args.date,'timeLimit':args.time_limit,'showSource':True,'totalMarks':sum(r['marks'] or 0 for r in selected),'marksIncomplete':sum(r['marks'] is None for r in selected)}
-    for answer,name in [(False,student_name),(True,answer_name)]:pdf_engine.build_pdf(selected,out/name,title,metadata,answer)
+    # Stage both PDFs together. An unsafe layout must not leave a seemingly finished student paper.
+    import tempfile
+    layout_audit={}
+    with tempfile.TemporaryDirectory(prefix='.render-',dir=out) as staging:
+        for answer,name in [(False,student_name),(True,answer_name)]:
+            layout_audit['answers' if answer else 'student']=pdf_engine.build_pdf(selected,Path(staging)/name,title,metadata,answer)
+        for name in [student_name,answer_name]:os.replace(Path(staging)/name,out/name)
     selection={'course':args.course,'level':args.level,'syllabus_year':args.year,'title':title,'files':{'student':student_name,'answers':answer_name},'ids':args.ids,
-               'sources':[r['source_ref'] for r in selected],'teacher_review_required':True}
+               'sources':[r['source_ref'] for r in selected],'teacher_review_required':True,'requirements_check':validation,'layout_audit':layout_audit,'excerpts':[r['id'] for r in selected if r.get('excerpt')],
+               'excerpt_details':[{'id':r['id'],'original_id':r.get('original_id'),'retained_parts':r.get('retained_parts'),'source_ref':r['source_ref'],'retained_marks':r['marks'],'independently_answerable':review['questions'][r['id']].get('independently_answerable') if args.review_file else None} for r in selected if r.get('excerpt')]}
     (out/'selection.json').write_text(json.dumps(selection,ensure_ascii=False,indent=2))
     history.parent.mkdir(parents=True,exist_ok=True)
     with history.open('a') as f:f.write(json.dumps(selection,ensure_ascii=False)+'\n')

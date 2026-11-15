@@ -317,7 +317,8 @@ def _web_item_meta(number,item):
     if match:
         paper,session,year,question=match.groups()
         session={'F/M':'Feb/Mar','M/J':'May/Jun','O/N':'Oct/Nov'}[session]
-        return f'{number}. 20{year} {session} | Paper {paper} | Q{int(question)} | {mark_text} marks'
+        suffix=source_ref(item)[match.end():].strip()
+        return f'{number}. 20{year} {session} | Paper {paper} | Q{int(question)}'+(' '+suffix if suffix else '')+f' | {mark_text} marks'
     return f'{number}. {source_ref(item)} | {mark_text} marks'
 
 
@@ -396,46 +397,75 @@ class PdfComposer:
 
     def add_item(self,number,item,image_path):
         import math
+        from material_layout import prepare_material,safe_white_bands
+        image,audit=prepare_material(image_path,item,self.answer)
+        if not hasattr(self,'material_audit'):self.material_audit=[]
+        self.material_audit.append({'id':item['id'],'answer':self.answer,**audit})
         if not self.page_no:self.new_page()
-        with Image.open(image_path) as source:image=source.convert('RGB')
         scale=min(self.content_width/image.width,.75)
-        if image.height*scale>1450:scale*=.98
         fresh=self.page_height-self.margin-18-38-22
         current=self.y-38-22
-        if self.items_on_page and image.height*scale>current and (image.height*scale<=fresh or current<fresh*.72):self.new_page()
+        atomic=item.get('kind')=='mcq'
+        protected=audit.get('protected_ranges',[])
+        first_block=protected[0][1] if protected else 0
+        if self.items_on_page and first_block*scale>current and first_block*scale<=fresh:
+            self.new_page();current=self.y-38-22
+        if not self.items_on_page and first_block*scale>current and current/(first_block*scale)>=.75:
+            scale=current/first_block
+        if atomic and image.height*scale>fresh:
+            if fresh/(image.height*scale)<.75:raise ValueError('MCQ too large to keep complete on one page; review source layout')
+            scale=fresh/image.height
+        # Decide before drawing a heading; keep its first body block on the same page.
+        if self.items_on_page and (current<90 or (image.height*scale>current and image.height*scale<=fresh)):
+            self.new_page();current=self.y-38-22
+        if image.height*scale>current and image.height*scale<=current/0.88:
+            scale=current/image.height
+        if atomic and image.height*scale>current:
+            if self.items_on_page:self.new_page();current=self.y-38-22
+            if current/(image.height*scale)<.75:raise ValueError('MCQ cannot fit first page without unreadable scaling')
+            scale=min(scale,current/image.height)
         self.pdf.setStrokeColor(HexColor('#ccd4db'));self.pdf.setLineWidth(.6)
         self.pdf.line(self.margin,self.y,self.page_width-self.margin,self.y)
         self._text(_web_item_meta(number,item),self.margin,self.y-14,9.5,'Helvetica-Bold',max_width=self.content_width)
         self.y-=22
-        offset=0;profile=None
+        bands=safe_white_bands(image,protected);offset=0
         while offset<image.height:
             available=self.y-38
-            if available<70:self._continued(number);available=self.y-38
             maximum=max(1,math.floor(available/scale))
             remaining=image.height-offset
-            merge=maximum<remaining<=maximum*1.08
-            if remaining<=maximum or merge:height=remaining
+            draw_scale=scale
+            if remaining<=maximum:height=remaining
+            elif maximum/remaining>=.84:
+                # Keep a short tail (including a mark line) with its preceding content.
+                height=remaining;draw_scale=available/height
             else:
-                if profile is None:profile=_row_profile(image)
-                height=_web_slice_height(image,profile,offset,maximum)
-            slice_scale=available/height if merge else scale
+                legal=[(top,bottom) for top,bottom in bands if bottom-top>=6 and top>=offset+maximum*.40 and bottom<=offset+maximum]
+                if legal:
+                    top,bottom=legal[-1];height=(top+bottom)//2-offset
+                else:
+                    after=[(top,bottom) for top,bottom in bands if top>=offset+maximum and bottom-top>=6]
+                    end=(sum(after[0])//2) if after else image.height
+                    height=end-offset;draw_scale=min(scale,available/height)
+                    if draw_scale/scale<.75:raise ValueError('No safe white band before figure for '+item['id']+'; provide a reviewed layout instead of cutting ink')
             part=image.crop((0,offset,image.width,offset+height))
             buffer=BytesIO();part.save(buffer,format='PNG');buffer.seek(0)
-            draw_height=height*slice_scale
-            self.pdf.drawImage(ImageReader(buffer),self.margin,self.y-draw_height,image.width*slice_scale,draw_height,mask='auto')
+            draw_height=height*draw_scale
+            self.pdf.drawImage(ImageReader(buffer),self.margin,self.y-draw_height,image.width*draw_scale,draw_height,mask='auto')
             offset+=height
-            gap=MCQ_STUDENT_GAP_PT if item.get('kind')=='mcq' and not self.answer and offset>=image.height else DEFAULT_ITEM_GAP_PT
-            self.y-=draw_height+gap;self.items_on_page+=1
+            self.y-=draw_height
+            self.items_on_page+=1
             if offset<image.height:self._continued(number)
+        self.y-=MCQ_STUDENT_GAP_PT if atomic and not self.answer else DEFAULT_ITEM_GAP_PT
 
     def save(self):
         if not self.page_no:self.new_page()
         self.pdf.showPage();self.pdf.save()
 
 
-def build_pdf(items: list[dict], output: Path, title: str, metadata: dict, answer: bool) -> None:
+def build_pdf(items: list[dict], output: Path, title: str, metadata: dict, answer: bool) -> list[dict]:
     composer=PdfComposer(output,title,metadata,answer)
     for number,item in enumerate(items,1):
         relative=item['answer_image'] if answer else item['question_image']
         composer.add_item(number,item,safe_under(BANK_ROOT,relative))
     composer.save()
+    return composer.material_audit

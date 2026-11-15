@@ -74,6 +74,8 @@ def fetch_one(row,side):
     raise RuntimeError(row['id']+' '+side+'：题库素材暂时无法取得，请检查网络后重试。'+(' '+errors[-1] if errors else ''))
 
 def ensure_assets(rows):
+    if any(r.get('excerpt') and r.get('source_kind')=='builtin' for r in rows):
+        raise ValueError('An excerpt must be imported as independent local material; original bank downloads cannot replace reviewed crops')
     jobs=[(row,side) for row in rows for side in ['question','answer'] if row.get('source_kind')=='builtin']
     missing=sum(not verify_image(Path(row[side+'_image']),urllib.parse.parse_qs(urllib.parse.urlsplit(row[side+'_asset']).query)['v'][0]) for row,side in jobs)
     if missing:print('正在自动准备'+str(missing)+'张题目/答案图片；已缓存的内容会直接复用。',file=sys.stderr)

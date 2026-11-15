@@ -2,7 +2,7 @@
 name: lesson2hw-physics
 description: "根据板书、PPT、PDF课件或一句话生成9702/0625物理作业。内置两课6586题索引，首次自动准备环境并按需缓存题目与答案，输出学生卷和答案卷；老师无需自备题库或填写路径。"
 license: MIT
-metadata: {"author": "LauraPhysics", "version": "0.5.6", "display_name": "Lesson2HW Physics｜课后有题", "workbuddy": {"display_name": "Lesson2HW Physics｜课后有题", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，按板书、PPT、PDF或一句话出作业；0625仅用Paper2/4/6（目前内置2/4，Paper6素材待补）。首次联网自动准备。", "description_en": "Homework from lesson material. 0625 components 2/4/6 only; built-in 0625 material currently covers 2/4. Automatic first-run setup.", "version": "0.5.6", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation.", "0625 Extended speed-time graphs: six MCQs and two structured questions, excluding energy."]}}
+metadata: {"author": "LauraPhysics", "version": "0.5.7", "display_name": "Lesson2HW Physics｜课后有题", "workbuddy": {"display_name": "Lesson2HW Physics｜课后有题", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，按板书、PPT、PDF或一句话出作业；0625仅用Paper2/4/6（目前内置2/4，Paper6素材待补）。首次联网自动准备。", "description_en": "Homework from lesson material. 0625 components 2/4/6 only; built-in 0625 material currently covers 2/4. Automatic first-run setup.", "version": "0.5.7", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation.", "0625 Extended speed-time graphs: six MCQs and two structured questions, excluding energy."]}}
 ---
 
 # Lesson2HW Physics｜课后有题：9702 / 0625物理
@@ -54,15 +54,19 @@ A2没有官方MCQ，明确要自编时保留用户意图并标原创，但本版
 
 ## 导出与逐页验收
 
+先按[图像与教师要求验收](references/layout-and-request-checks.md)生成本次复核文件：记录原话、指定页码、逐题教学范围与答案检查、题答图像SHA256和明确题量/时长。默认允许保留符合范围、能够独立作答的小问或小问组，删除同一道原题中越界的部分，同步裁剪答案并按保留小问计分。明确标注原题节选，不因原题其他小问越界而整题丢弃；只有教师明确要求“完整原题/不能节选”时，才设置whole_questions_only=true。题量和估算时长同时校验，材料不足不扩大范围凑数。
+
 确认全部题目后执行：
 
-`bash <skill-dir>/scripts/run.sh export --course 9702 --level A2 --year 2026 --checked --title '<作业标题>' <真实ID...>`
+`bash <skill-dir>/scripts/run.sh export --course 9702 --level A2 --year 2026 --checked --review-file <本次复核文件> --title '<作业标题>' <真实ID...>`
 
 ID的传入顺序即试卷顺序；默认先MCQ后结构题，同类按最近年份优先，除非用户指定顺序。--checked表示已完成语义查看，不是程序证明。输出按教学内容命名的学生卷、答案卷和selection.json，默认在workspace的课程output新目录。未知分值不捏造，总分仅已知部分；建议限时如未要求可省略，0625不套9702计时。
 
 运行 `bash <skill-dir>/scripts/run.sh qa <实际学生卷路径> <实际答案卷路径> --output-dir <本次输出>/qa --contact-only`（Windows用run.ps1 qa），打开全部页面联系图检查：图表未被切断、选项完整、编号与续页正确、不混入下一题、学生卷没有答案、答案卷与选题一致。发现源裁图问题时回原PDF针对性重裁；不要为了排版拉伸图像或误删图表。无法完成视觉验收则标待人工检查，不说通过。
 
 交付两个真实可打开的PDF链接，简述课程/层级、实际数量、来源、减量及未解决项。所有成品供教师复核；不宣称Cambridge官方背书、保证零错误或适配全部资料。
+
+源图清理使用与实际图像SHA256绑定的规则；未知源图由Agent目视检查并针对性处理，不能凭墨迹密度删图。图的引导语、图形、坐标和图注以及提问与对应作答行须保持同页。独立小问必须用新ID、真实保留分值和独立本地图导入，不继承原题下载标记；详见上述验收说明。程序拒绝不安全分页，且题答两卷一起成功后才交付。
 
 PDF版式以LauraPhysics.com为准：首面内缩深蓝标题卡+红线、英文卷别与姓名/班级/日期栏；续页紧凑英文页眉；题目细分隔线与来源；每页保留红色L标、Laura-LLU | github.com/Laura-LLU、课程及当前页/总页数。不要改为平台品牌或中文蓝底题目条。可通过export的--class-name、--student-name、--date、--time-limit传入教师信息。
 

@@ -4,9 +4,9 @@
 
 面向Codex、Claude Code、WorkBuddy等AI Agent的开源技能。老师无需自建题库、配置Python或填写本项目API Key；Agent使用内置题库索引，筛选已教范围内的题目，生成独立的学生卷和答案卷，供老师复核。
 
-**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.6/lesson2hw-physics-0.5.6-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.6/lesson2hw-physics-0.5.6-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.6)**
+**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.7/lesson2hw-physics-0.5.7-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.7/lesson2hw-physics-0.5.7-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.7)**
 
-当前为 **v0.5.6 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
+当前为 **v0.5.7 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
 
 ## 老师只需一句话安装
 
@@ -69,15 +69,19 @@ Agent需要文件读写、命令执行、联网取题、完整图像阅读和PDF
 
 默认工作文件在当前用户~/codex/lesson2hw-physics，首次准备不修改系统Python或shell配置。更换Agent后同一系统用户可复用该目录；不同班级可让Agent设置独立工作目录。
 
+默认按教学范围保留独立小问：同一道原题后续内容越界时，删除越界部分并同步保留答案、实际分值及来源，明确标注“原题节选”。只有教师明确要求完整原题时才限制整题。题目依赖的条件、引导语和图表必须保留。
+
 ## PDF版式
 
 导出与[LauraPhysics.com](https://lauraphysics.com)保持同一版式：内缩深蓝标题卡与红线、英文学生卷/答案卷标识、姓名班级日期栏、简洁来源行、Laura-LLU品牌页脚及当前页/总页数。学生卷选择题之间额外保留约1.3厘米空白，答案卷保持紧凑；这是按教师要求对网站旧间距的调整。两门课程同题逐页对照已完成，详见[版式基准](docs/PDF版式与网站一致.md)。浏览器与本地字体渲染仍可能有细微差异。
 
 ## 验证状态
 
-已完成27项本地单元检查、通用Skill元数据检查、ZIP完整性和跨位置索引初始化。前身版本已在Mac空白工作目录自动准备环境，并分别用两门课程真实题答生成和查看作业/答案。本版本已从通用技能ZIP换目录初始化两门题库，并各生成和检查一套真实学生卷/答案卷。
+已完成40项本地单元检查、通用Skill元数据检查、ZIP完整性和跨位置索引初始化。前身版本已在Mac空白工作目录自动准备环境，并分别用两门课程真实题答生成和查看作业/答案。本轮从通用技能ZIP换目录初始化两门题库索引；10份真实素材的本地出卷与逐页复核记录见测试状态。
 
-尚未完成：各Agent客户端逐一实装、另一台Mac/Windows实机、真实教师PPT/板书理解系统评测和课堂效果。不能把代码测试通过当作AI选题永远正确。详见[测试状态](docs/测试状态.md)。
+已用5份板书及5份PPT的指定页码模拟真实教师要求，分别出作业和答案并复核范围、题量、估算时长及全部页面；两例采用明确标注的独立小问节选。估算时长未经学生实测。详见[本轮测试](docs/测试状态.md)。
+
+尚未完成：各Agent客户端逐一实装、另一台Mac/Windows实机、各宿主独立运行的板书/PPT理解系统评测和课堂效果。不能把代码测试通过当作AI选题永远正确。详见[测试状态](docs/测试状态.md)。
 
 ## 开源与参与
 
