@@ -33,7 +33,7 @@ install-skill-from-github.py --repo Laura-LLU/lesson2hw-physics --path skill/les
 
 ## WorkBuddy
 
-下载Release中的lesson2hw-physics-0.5.4-workbuddy.zip，使用当前客户端的本地技能导入功能安装。该包适配展示字段，题库和运行代码与通用包一致。核对技能可见后实际调用一次；尚无本项目在该客户端的独立验收记录。
+下载Release中的lesson2hw-physics-0.5.5-workbuddy.zip，使用当前客户端的本地技能导入功能安装。该包适配展示字段，题库和运行代码与通用包一致。核对技能可见后实际调用一次；尚无本项目在该客户端的独立验收记录。
 
 ## 其他Agent
 

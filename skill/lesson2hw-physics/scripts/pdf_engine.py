@@ -14,6 +14,8 @@ BRAND_NAME = 'LauraPhysics'
 BRAND_URL = 'https://github.com/Laura-LLU'
 BRAND_FOOTER = 'Laura-LLU | github.com/Laura-LLU'
 CURRENT_COURSE = '9702'
+MCQ_STUDENT_GAP_PT = 36.0
+DEFAULT_ITEM_GAP_PT = 14.0
 PDF_FONT_NAME = 'PhysicsBankUnicode'
 PDF_FONT_PATH = Path('/System/Library/Fonts/Supplemental/Arial Unicode.ttf')
 if not PDF_FONT_PATH.is_file():
@@ -421,7 +423,9 @@ class PdfComposer:
             buffer=BytesIO();part.save(buffer,format='PNG');buffer.seek(0)
             draw_height=height*slice_scale
             self.pdf.drawImage(ImageReader(buffer),self.margin,self.y-draw_height,image.width*slice_scale,draw_height,mask='auto')
-            self.y-=draw_height+14;offset+=height;self.items_on_page+=1
+            offset+=height
+            gap=MCQ_STUDENT_GAP_PT if item.get('kind')=='mcq' and not self.answer and offset>=image.height else DEFAULT_ITEM_GAP_PT
+            self.y-=draw_height+gap;self.items_on_page+=1
             if offset<image.height:self._continued(number)
 
     def save(self):
