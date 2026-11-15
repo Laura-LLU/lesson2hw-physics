@@ -120,7 +120,7 @@ def main():
     search.add_argument('--exclude-id',action='append',default=[]);search.add_argument('--include-used',action='store_true')
     export=sub.add_parser('export');export.add_argument('--course',choices=PROFILES,required=True);export.add_argument('--level',required=True)
     export.add_argument('--year',type=int,required=True);export.add_argument('--title',default='Physics Homework');export.add_argument('--checked',action='store_true')
-    export.add_argument('--output-dir');export.add_argument('ids',nargs='+')
+    export.add_argument('--output-dir');export.add_argument('--class-name',default='');export.add_argument('--student-name',default='');export.add_argument('--date',default=datetime.date.today().isoformat());export.add_argument('--time-limit',default='');export.add_argument('ids',nargs='+')
     info=sub.add_parser('info');info.add_argument('--course',choices=PROFILES,required=True)
     args=ap.parse_args();workspace=Path(args.workspace).expanduser().resolve()
     if args.cmd=='prepare':
@@ -178,8 +178,8 @@ def main():
     # Exporter uses absolute user-supplied files, not a fixed machine's bank folder.
     pdf_engine.BANK_ROOT=Path(os.path.commonpath([str(p.parent) for p in sources]))
     out.mkdir(parents=True,exist_ok=True)
-    metadata={'showSource':True,'totalMarks':sum(r['marks'] or 0 for r in selected),'marksIncomplete':sum(r['marks'] is None for r in selected)}
-    for answer,name in [(False,'student.pdf'),(True,'answers.pdf')]:pdf_engine.build_pdf(selected,out/name,args.title[:48],metadata,answer)
+    metadata={'className':args.class_name,'studentName':args.student_name,'dueDate':args.date,'timeLimit':args.time_limit,'showSource':True,'totalMarks':sum(r['marks'] or 0 for r in selected),'marksIncomplete':sum(r['marks'] is None for r in selected)}
+    for answer,name in [(False,'student.pdf'),(True,'answers.pdf')]:pdf_engine.build_pdf(selected,out/name,args.title[:180],metadata,answer)
     selection={'course':args.course,'level':args.level,'syllabus_year':args.year,'title':args.title,'ids':args.ids,
                'sources':[r['source_ref'] for r in selected],'teacher_review_required':True}
     (out/'selection.json').write_text(json.dumps(selection,ensure_ascii=False,indent=2))

@@ -2,7 +2,7 @@
 name: lesson2hw-physics
 description: "根据板书、PPT、PDF课件或一句话生成9702/0625物理作业。内置两课6586题索引，首次自动准备环境并按需缓存题目与答案，输出学生卷和答案卷；老师无需自备题库或填写路径。"
 license: MIT
-metadata: {"author": "LauraPhysics", "version": "0.5.2", "display_name": "Lesson2HW Physics｜课后有题", "workbuddy": {"display_name": "Lesson2HW Physics｜课后有题", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，首次联网自动准备，根据板书、PPT、PDF课件或一句话选题出卷；不需老师自建题库。", "description_en": "Built-in 9702/0625 bank metadata, automatic first-run setup, and on-demand paired materials for homework generation.", "version": "0.5.2", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation.", "0625 Extended speed-time graphs: six MCQs and two structured questions, excluding energy."]}}
+metadata: {"author": "LauraPhysics", "version": "0.5.3", "display_name": "Lesson2HW Physics｜课后有题", "workbuddy": {"display_name": "Lesson2HW Physics｜课后有题", "display_name_en": "Lesson2HW Physics", "description_zh": "内置9702与0625题库入口，首次联网自动准备，根据板书、PPT、PDF课件或一句话选题出卷；不需老师自建题库。", "description_en": "Built-in 9702/0625 bank metadata, automatic first-run setup, and on-demand paired materials for homework generation.", "version": "0.5.3", "author": "LauraPhysics", "examples_zh": ["9702 A2圆周运动，3道中等结构题，不考引力。", "0625 Extended速度—时间图，6道选择题和2道结构题，排除能量。"], "examples_en": ["9702 A2: three medium circular-motion questions, excluding gravitation.", "0625 Extended speed-time graphs: six MCQs and two structured questions, excluding energy."]}}
 ---
 
 # Lesson2HW Physics｜课后有题：9702 / 0625物理
@@ -63,3 +63,5 @@ ID的传入顺序即试卷顺序；默认先MCQ后结构题，同类按最近年
 运行 `bash <skill-dir>/scripts/run.sh qa <student.pdf> <answers.pdf> --output-dir <本次输出>/qa --contact-only`（Windows用run.ps1 qa），打开全部页面联系图检查：图表未被切断、选项完整、编号与续页正确、不混入下一题、学生卷没有答案、答案卷与选题一致。发现源裁图问题时回原PDF针对性重裁；不要为了排版拉伸图像或误删图表。无法完成视觉验收则标待人工检查，不说通过。
 
 交付两个真实可打开的PDF链接，简述课程/层级、实际数量、来源、减量及未解决项。所有成品供教师复核；不宣称Cambridge官方背书、保证零错误或适配全部资料。
+
+PDF版式以LauraPhysics.com为准：首面内缩深蓝标题卡+红线、英文卷别与姓名/班级/日期栏；续页紧凑英文页眉；题目细分隔线与来源；每页保留红色L标、Laura-LLU | github.com/Laura-LLU、课程及当前页/总页数。不要改为平台品牌或中文蓝底题目条。可通过export的--class-name、--student-name、--date、--time-limit传入教师信息。

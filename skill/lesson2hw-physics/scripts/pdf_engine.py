@@ -12,7 +12,7 @@ from reportlab.pdfgen import canvas
 BANK_ROOT = Path('.')
 BRAND_NAME = 'LauraPhysics'
 BRAND_URL = 'https://github.com/Laura-LLU'
-BRAND_FOOTER = 'LauraPhysics | Lesson2HW Physics'
+BRAND_FOOTER = 'Laura-LLU | github.com/Laura-LLU'
 CURRENT_COURSE = '9702'
 PDF_FONT_NAME = 'PhysicsBankUnicode'
 PDF_FONT_PATH = Path('/System/Library/Fonts/Supplemental/Arial Unicode.ttf')
@@ -228,155 +228,210 @@ def split_image(path: Path, width_points: float, max_height_points: float, item:
         start = end
     return slices or [image]
 
-class PdfComposer:
-    def __init__(self, output: Path, title: str, metadata: dict, answer: bool):
-        output.parent.mkdir(parents=True, exist_ok=True)
-        self.page_width, self.page_height = A4
-        self.margin = 38
-        self.content_width = self.page_width - 2 * self.margin
-        self.title = title
-        self.metadata = metadata
-        self.answer = answer
-        self.pdf = canvas.Canvas(str(output), pagesize=A4)
-        self.pdf.setTitle(title)
-        self.pdf.setAuthor(BRAND_NAME)
-        self.page_no = 0
-        self.y = 0.0
-        self.items_on_page = 0
-        self.current_kind = ""
-        try:
-            pdfmetrics.getFont(PDF_FONT_NAME)
-        except KeyError:
-            if not PDF_FONT_PATH.is_file():
-                raise RuntimeError(f"PDF 导出缺少所需字体：{PDF_FONT_PATH}")
-            pdfmetrics.registerFont(TTFont(PDF_FONT_NAME, str(PDF_FONT_PATH)))
+class NumberedCanvas(canvas.Canvas):
+    """Defer page finalization so every footer can contain current/total pages."""
+    def __init__(self, *args, footer, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._page_states = []
+        self._footer_callback = footer
 
-    def new_page(self) -> None:
-        if self.page_no:
-            self._footer()
-            self.pdf.showPage()
-        self.page_no += 1
-        self.items_on_page = 0
-        self.current_kind = ""
-        self.pdf.setFillColor(HexColor("#102A43"))
-        self.pdf.rect(0, self.page_height - 48, self.page_width, 48, fill=1, stroke=0)
-        self.pdf.setFillColor(white)
-        self.pdf.setFont(PDF_FONT_NAME, 13)
-        label = "答案卷" if self.answer else "学生作业"
-        self.pdf.drawString(self.margin, self.page_height - 30, f"{self.title}  -  {label}")
-        self.y = self.page_height - 62
-        if self.page_no == 1:
-            self._metadata_block()
+    def showPage(self):
+        self._page_states.append(dict(self.__dict__))
+        self._startPage()
 
-    def _metadata_block(self) -> None:
-        self.pdf.setFillColor(HexColor("#243B53"))
-        self.pdf.setFont(PDF_FONT_NAME, 9.5)
-        class_name = self.metadata.get("className", "")
-        student = self.metadata.get("studentName", "")
-        due = self.metadata.get("dueDate", "")
-        limit = self.metadata.get("timeLimit", "")
-        total = self.metadata.get("totalMarks", 0)
-        incomplete = self.metadata.get("marksIncomplete", 0)
-        line1 = f"班级：{class_name or '________________'}    姓名：{student or '________________'}    日期：{due or '________________'}"
-        total_text = f"已知总分：{total}" if total else "总分：以原题标注为准"
-        if incomplete:
-            total_text += f"（{incomplete}题未记录分值）"
-        line2 = f"建议用时：{limit or '____'} 分钟    {total_text}"
-        self.pdf.drawString(self.margin, self.y, line1)
-        self.y -= 17
-        self.pdf.drawString(self.margin, self.y, line2)
-        self.y -= 17
-        self.pdf.setStrokeColor(HexColor("#BCCCDC"))
-        self.pdf.line(self.margin, self.y, self.page_width - self.margin, self.y)
-        self.y -= 15
+    def save(self):
+        total = len(self._page_states)
+        for state in self._page_states:
+            self.__dict__.update(state)
+            self._footer_callback(self, self._pageNumber, total)
+            canvas.Canvas.showPage(self)
+        canvas.Canvas.save(self)
 
-    def _footer(self) -> None:
-        self.pdf.setStrokeColor(HexColor("#D9E2EC"))
-        self.pdf.line(self.margin, 43, self.page_width - self.margin, 43)
-        self.pdf.setFillColor(HexColor("#C9473A"))
-        self.pdf.circle(self.margin + 6, 28, 6, fill=1, stroke=0)
-        self.pdf.setFillColor(white)
-        self.pdf.setFont("Helvetica-Bold", 7)
-        self.pdf.drawCentredString(self.margin + 6, 25.5, "L")
-        self.pdf.setFillColor(HexColor("#36546F"))
-        self.pdf.setFont("Helvetica-Bold", 8)
-        self.pdf.drawString(self.margin + 17, 25.5, BRAND_FOOTER)
-        link_width = pdfmetrics.stringWidth(BRAND_FOOTER, "Helvetica-Bold", 8)
-        self.pdf.linkURL(BRAND_URL, (self.margin, 21, self.margin + 19 + link_width, 36), relative=0, thickness=0)
-        self.pdf.setFillColor(HexColor("#627D98"))
-        self.pdf.setFont("Helvetica", 7.5)
-        self.pdf.drawString(self.margin, 12, "Physics homework | " + CURRENT_COURSE + "")
-        self.pdf.drawRightString(self.page_width - self.margin, 12, f"Page {self.page_no}")
 
-    def _ensure_space(self, required: float, kind: str) -> None:
-        page_bottom = 52
-        if not self.page_no:
-            self.new_page()
-            return
-        if kind == "mcq" and self.current_kind == "mcq" and self.items_on_page >= 3:
-            self.new_page()
-        elif kind == "structured" and self.items_on_page:
-            self.new_page()
-        elif self.y - required < page_bottom and self.items_on_page:
-            self.new_page()
+def _row_profile(image):
+    import math
+    scan_width = min(900, image.width)
+    factor = scan_width / image.width
+    sample = image.resize((scan_width, max(1, math.floor(image.height * factor + .5)))).convert('RGB')
+    pixels = sample.load()
+    left, right = int(scan_width * .025), math.ceil(scan_width * .975)
+    scores, spans = [], []
+    for y in range(sample.height):
+        dark = [x for x in range(left, right, 2) if sum(pixels[x,y]) < 720]
+        scores.append(len(dark))
+        spans.append(dark[-1] - dark[0] + 1 if dark else 0)
+    return {'scores':scores,'spans':spans,'width':scan_width,'factor':factor,
+            'blank':max(2,int(((right-left)/2)*.006))}
 
-    def add_item(self, number: int, item: dict, image_path: Path) -> None:
-        kind = "mcq" if item.get("kind") == "mcq" else "structured"
-        if kind == "mcq" and self.answer:
-            draw_max_width = min(260, self.content_width)
-        elif kind == "structured":
-            draw_max_width = self.content_width - 40
+
+def _web_slice_height(image, profile, offset, maximum):
+    """Match the public site's blank-band pagination and short-tail handling."""
+    import math
+    remaining = image.height - offset
+    if remaining <= maximum:return remaining
+    scores, spans, factor = profile['scores'], profile['spans'], profile['factor']
+    minimum = min(maximum,max(120,int(maximum*.55)))
+    start = max(0,math.ceil((offset+minimum)*factor))
+    end = min(len(scores)-1,math.floor((offset+maximum-4)*factor))
+    run_min = max(8,math.floor(36*factor+.5))
+    def substantial(cut,stop):
+        row = cut+1
+        while row<=stop and scores[row]<=profile['blank']:row+=1
+        ink=span=blank=0
+        while row<=stop:
+            if scores[row]<=profile['blank']:
+                blank+=1
+                if blank>=run_min:break
+            else:
+                blank=0;ink+=scores[row];span=max(span,spans[row])
+            row+=1
+        return span>=profile['width']*.16 or ink>=profile['width']*.28
+    run_end=-1
+    for row in range(end,start-1,-1):
+        if scores[row]<=profile['blank']:
+            if run_end<0:run_end=row
         else:
-            draw_max_width = self.content_width
-        page_bottom = 52
-        max_height = self.page_height - 48 - page_bottom - 42
-        if self.page_no == 0:
-            self.new_page()
-        available_first = self.y - page_bottom - 30
-        slice_height = max(210, min(max_height, available_first if not self.items_on_page else max_height))
-        images = split_image(image_path, draw_max_width, slice_height, item, self.answer)
+            if run_end>=0 and run_end-row>=run_min:
+                cut=(row+1+run_end)//2
+                stop=min(len(scores)-1,cut+max(100,math.floor(260*factor+.5)))
+                if substantial(cut,stop):return max(1,math.floor(cut/factor)-offset)
+            run_end=-1
+    if run_end>=0 and run_end-start+1>=run_min:
+        return max(1,math.floor(((start+run_end)//2)/factor)-offset)
+    # As on the website, prefer the least-ink row if no usable blank band exists.
+    best, best_score = end, float('inf')
+    for row in range(max(start,math.floor(end-(end-start)*.35)),end+1):
+        values=[scores[i] for i in range(row-2,row+3) if 0<=i<len(scores)]
+        score=sum(values)/len(values)
+        if score<=best_score:best,best_score=row,score
+    return max(1,math.floor(best/factor)-offset)
 
-        for part_no, image in enumerate(images, 1):
-            scaled_height = image.height * draw_max_width / image.width
-            required = 27 + scaled_height + 12
-            part_kind = kind if part_no == 1 else "structured"
-            self._ensure_space(required, part_kind)
-            continuation = "（续）" if part_no > 1 else ""
-            label = "答案" if self.answer else "题目"
-            marks = effective_marks(item)
-            marks_text = f" · {marks} marks" if marks else ""
-            self.pdf.setFillColor(HexColor("#EAF2F8"))
-            self.pdf.roundRect(self.margin, self.y - 20, self.content_width, 22, 5, fill=1, stroke=0)
-            self.pdf.setFillColor(HexColor("#102A43"))
-            self.pdf.setFont(PDF_FONT_NAME, 9.5)
-            self.pdf.drawString(self.margin + 8, self.y - 14, f"{label} {number}{continuation}{marks_text}")
-            if self.answer or self.metadata.get("showSource"):
-                self.pdf.setFont("Helvetica", 8)
-                self.pdf.drawRightString(self.page_width - self.margin - 8, self.y - 14, source_ref(item))
-            self.y -= 28
 
-            buffer = BytesIO()
-            image.save(buffer, format="PNG", optimize=True)
-            buffer.seek(0)
-            draw_height = image.height * draw_max_width / image.width
-            if self.y - draw_height < page_bottom:
-                draw_height = self.y - page_bottom
-            draw_width = image.width * draw_height / image.height
-            x = self.margin + (self.content_width - draw_width) / 2
-            self.pdf.drawImage(ImageReader(buffer), x, self.y - draw_height, draw_width, draw_height, preserveAspectRatio=True, mask="auto")
-            self.y -= draw_height + 12
-            self.items_on_page += 1
-            self.current_kind = part_kind
+def _web_item_meta(number,item):
+    import re
+    match = re.match(r'^(?:9702|0625)/(\d+)/(F/M|M/J|O/N)/(\d{2})(?:\s+v\d+)?\s+Q(\d+)',source_ref(item))
+    marks = effective_marks(item)
+    mark_text = str(marks) if marks else '?'
+    if match:
+        paper,session,year,question=match.groups()
+        session={'F/M':'Feb/Mar','M/J':'May/Jun','O/N':'Oct/Nov'}[session]
+        return f'{number}. 20{year} {session} | Paper {paper} | Q{int(question)} | {mark_text} marks'
+    return f'{number}. {source_ref(item)} | {mark_text} marks'
 
-    def save(self) -> None:
-        if not self.page_no:
-            self.new_page()
-        self._footer()
-        self.pdf.save()
+
+class PdfComposer:
+    """LauraPhysics.com layout: inset first-page card, compact continuation, N/total footer."""
+    def __init__(self, output: Path, title: str, metadata: dict, answer: bool):
+        output.parent.mkdir(parents=True,exist_ok=True)
+        self.page_width,self.page_height=595.28,841.89
+        self.margin=38
+        self.content_width=self.page_width-2*self.margin
+        self.title,self.metadata,self.answer=title,metadata,answer
+        self.course=CURRENT_COURSE
+        self.page_no=0
+        self.y=0
+        self.pdf=NumberedCanvas(str(output),pagesize=(self.page_width,self.page_height),footer=self._footer)
+        self.pdf.setTitle(title)
+        self.pdf.setAuthor('Laura-LLU')
+        self.pdf.setSubject(f'{self.course} Physics | '+('Mark Scheme' if answer else 'Student Paper'))
+        try:pdfmetrics.getFont(PDF_FONT_NAME)
+        except KeyError:
+            if not PDF_FONT_PATH.is_file():raise RuntimeError(f'Missing PDF font: {PDF_FONT_PATH}')
+            pdfmetrics.registerFont(TTFont(PDF_FONT_NAME,str(PDF_FONT_PATH)))
+
+    def _text(self,text,x,y,size,font='Helvetica',color='#172336',max_width=None):
+        if any(ord(c)>255 for c in text):font=PDF_FONT_NAME
+        if max_width:
+            while size>6 and pdfmetrics.stringWidth(text,font,size)>max_width:size-=.25
+            if pdfmetrics.stringWidth(text,font,size)>max_width:
+                while text and pdfmetrics.stringWidth(text+'...',font,size)>max_width:text=text[:-1]
+                text+='...'
+        self.pdf.setFillColor(HexColor(color));self.pdf.setFont(font,size)
+        self.pdf.drawString(x,y,text)
+
+    def new_page(self):
+        if self.page_no:self.pdf.showPage()
+        self.page_no+=1
+        self.items_on_page=0
+        top=self.page_height-self.margin
+        if self.page_no==1:
+            factor=self.content_width/1600
+            height=310*factor
+            self.pdf.setFillColor(HexColor('#132a46'))
+            self.pdf.rect(self.margin,top-164*factor,self.content_width,164*factor,fill=1,stroke=0)
+            self.pdf.setFillColor(HexColor('#d8493f'))
+            self.pdf.rect(self.margin,top-174*factor,self.content_width,10*factor,fill=1,stroke=0)
+            self._text(self.title,self.margin+52*factor,top-82*factor,54*factor,'Helvetica-Bold','#ffffff',1495*factor)
+            self._text('MARK SCHEME' if self.answer else 'STUDENT PAPER',self.margin+52*factor,top-132*factor,28*factor,'Helvetica-Bold','#b9d5ef')
+            fields=[('Class',self.metadata.get('className'),52,465),('Student',self.metadata.get('studentName'),540,500),('Date',self.metadata.get('dueDate'),1080,470)]
+            for label,value,x,width in fields:
+                self._text(f'{label}: {value or "____________"}',self.margin+x*factor,top-226*factor,30*factor,'Helvetica-Bold',max_width=width*factor)
+            course_name='Cambridge IGCSE Physics 0625' if self.course=='0625' else 'Cambridge International AS & A Level Physics 9702'
+            total=self.metadata.get('totalMarks',0)
+            incomplete=self.metadata.get('marksIncomplete',0)
+            marks=f'{total}' if not incomplete else f'{total} known ({incomplete} unknown)'
+            line=f'{course_name}  |  Suggested time: {self.metadata.get("timeLimit") or "____"} minutes  |  Total marks: {marks}'
+            self._text(line,self.margin+52*factor,top-280*factor,27*factor,'Helvetica','#526075',1495*factor)
+            self.y=top-height-18
+        else:
+            self._text(f'{self.course} Physics | '+('Mark Scheme' if self.answer else 'Student Paper'),self.margin,top+2,9,'Helvetica-Bold','#596e8a')
+            self.y=top-18
+
+    def _footer(self,pdf,number,total):
+        pdf.setStrokeColor(HexColor('#ccd4db'));pdf.setLineWidth(.5)
+        pdf.line(self.margin,28,self.page_width-self.margin,28)
+        pdf.setFillColor(HexColor('#d94a40'));pdf.circle(self.margin+7,16,7,fill=1,stroke=0)
+        pdf.setFillColor(white);pdf.setFont('Helvetica-Bold',7);pdf.drawString(self.margin+4.5,13,'L')
+        pdf.setFillColor(HexColor('#596e8a'));pdf.setFont('Helvetica-Bold',8)
+        pdf.drawString(self.margin+20,13,'Laura-LLU | github.com/Laura-LLU')
+        pdf.setFont('Helvetica',8);pdf.drawString(self.page_width-self.margin-118,13,f'{self.course} Physics')
+        pdf.drawString(self.page_width-self.margin-24,13,f'{number}/{total}')
+
+    def _continued(self,number):
+        self.new_page()
+        self._text(f'Question {number} continued',self.margin,self.y-12,8.5,'Helvetica','#596e8a')
+        self.y-=20
+
+    def add_item(self,number,item,image_path):
+        import math
+        if not self.page_no:self.new_page()
+        with Image.open(image_path) as source:image=source.convert('RGB')
+        scale=min(self.content_width/image.width,.75)
+        if image.height*scale>1450:scale*=.98
+        fresh=self.page_height-self.margin-18-38-22
+        current=self.y-38-22
+        if self.items_on_page and image.height*scale>current and (image.height*scale<=fresh or current<fresh*.72):self.new_page()
+        self.pdf.setStrokeColor(HexColor('#ccd4db'));self.pdf.setLineWidth(.6)
+        self.pdf.line(self.margin,self.y,self.page_width-self.margin,self.y)
+        self._text(_web_item_meta(number,item),self.margin,self.y-14,9.5,'Helvetica-Bold',max_width=self.content_width)
+        self.y-=22
+        offset=0;profile=None
+        while offset<image.height:
+            available=self.y-38
+            if available<70:self._continued(number);available=self.y-38
+            maximum=max(1,math.floor(available/scale))
+            remaining=image.height-offset
+            merge=maximum<remaining<=maximum*1.08
+            if remaining<=maximum or merge:height=remaining
+            else:
+                if profile is None:profile=_row_profile(image)
+                height=_web_slice_height(image,profile,offset,maximum)
+            slice_scale=available/height if merge else scale
+            part=image.crop((0,offset,image.width,offset+height))
+            buffer=BytesIO();part.save(buffer,format='PNG');buffer.seek(0)
+            draw_height=height*slice_scale
+            self.pdf.drawImage(ImageReader(buffer),self.margin,self.y-draw_height,image.width*slice_scale,draw_height,mask='auto')
+            self.y-=draw_height+14;offset+=height;self.items_on_page+=1
+            if offset<image.height:self._continued(number)
+
+    def save(self):
+        if not self.page_no:self.new_page()
+        self.pdf.showPage();self.pdf.save()
+
 
 def build_pdf(items: list[dict], output: Path, title: str, metadata: dict, answer: bool) -> None:
-    composer = PdfComposer(output, title, metadata, answer)
-    for number, item in enumerate(items, 1):
-        relative = item["answer_image"] if answer else item["question_image"]
-        composer.add_item(number, item, safe_under(BANK_ROOT, relative))
+    composer=PdfComposer(output,title,metadata,answer)
+    for number,item in enumerate(items,1):
+        relative=item['answer_image'] if answer else item['question_image']
+        composer.add_item(number,item,safe_under(BANK_ROOT,relative))
     composer.save()

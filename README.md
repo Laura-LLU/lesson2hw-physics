@@ -4,9 +4,9 @@
 
 面向Codex、Claude Code、WorkBuddy等AI Agent的开源技能。老师无需自建题库、配置Python或填写本项目API Key；Agent使用内置题库索引，筛选已教范围内的题目，生成独立的学生卷和答案卷，供老师复核。
 
-**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.2/lesson2hw-physics-0.5.2-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.2/lesson2hw-physics-0.5.2-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.2)**
+**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.3/lesson2hw-physics-0.5.3-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.3/lesson2hw-physics-0.5.3-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.3)**
 
-当前为 **v0.5.2 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
+当前为 **v0.5.3 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
 
 ## 老师只需一句话安装
 
@@ -67,9 +67,13 @@ Agent需要文件读写、命令执行、联网取题、完整图像阅读和PDF
 
 默认工作文件在当前用户~/codex/lesson2hw-physics，首次准备不修改系统Python或shell配置。更换Agent后同一系统用户可复用该目录；不同班级可让Agent设置独立工作目录。
 
+## PDF版式
+
+导出与[LauraPhysics.com](https://lauraphysics.com)保持同一版式：内缩深蓝标题卡与红线、英文学生卷/答案卷标识、姓名班级日期栏、简洁来源行、Laura-LLU品牌页脚及当前页/总页数。两门课程同题逐页对照已完成，详见[版式基准](docs/PDF版式与网站一致.md)。浏览器与本地字体渲染仍可能有细微差异。
+
 ## 验证状态
 
-已完成13项本地单元检查、通用Skill元数据检查、ZIP完整性和跨位置索引初始化。前身版本已在Mac空白工作目录自动准备环境，并分别用两门课程真实题答生成和查看作业/答案。本版本已从通用技能ZIP换目录初始化两门题库，并各生成和检查一套真实学生卷/答案卷。
+已完成16项本地单元检查、通用Skill元数据检查、ZIP完整性和跨位置索引初始化。前身版本已在Mac空白工作目录自动准备环境，并分别用两门课程真实题答生成和查看作业/答案。本版本已从通用技能ZIP换目录初始化两门题库，并各生成和检查一套真实学生卷/答案卷。
 
 尚未完成：各Agent客户端逐一实装、另一台Mac/Windows实机、真实教师PPT/板书理解系统评测和课堂效果。不能把代码测试通过当作AI选题永远正确。详见[测试状态](docs/测试状态.md)。
 
