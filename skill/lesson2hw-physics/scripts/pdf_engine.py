@@ -4,6 +4,8 @@ from urllib.parse import unquote
 from io import BytesIO
 from PIL import Image, ImageStat
 from reportlab.lib.colors import HexColor, white
+from reportlab import rl_config
+rl_config.useA85 = 0  # Flate PDF streams preserve pixels without a slow redundant ASCII85 layer.
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics

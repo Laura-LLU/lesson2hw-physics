@@ -10,7 +10,7 @@ $env:TMP = "$Work/tmp"
 $Python = "$Work/.venv/Scripts/python.exe"
 $Ready = $false
 if (Test-Path $Python) {
-    & $Python -c 'import PIL,pypdf,pdfplumber,reportlab,pypdfium2' 2>$null
+    & $Python -c 'import importlib.util,sys; sys.exit(not all(importlib.util.find_spec(m) for m in ["PIL","pypdf","pdfplumber","reportlab","pypdfium2"]))' 2>$null
     $Ready = ($LASTEXITCODE -eq 0)
 }
 if (-not $Ready) {
@@ -33,7 +33,9 @@ if (-not $Ready) {
     & $UV pip install --python $Python -r "$PSScriptRoot/requirements.txt"
     if ($LASTEXITCODE -ne 0) { throw '依赖准备未完成。' }
 }
-if ($args.Count -gt 0 -and $args[0] -eq 'qa') {
+if ($args.Count -gt 0 -and $args[0] -eq 'fast') {
+    & $Python "$PSScriptRoot/fast.py" --workspace $Work @($args | Select-Object -Skip 1)
+} elseif ($args.Count -gt 0 -and $args[0] -eq 'qa') {
     & $Python "$PSScriptRoot/qa_pdf.py" @($args | Select-Object -Skip 1)
 } else {
     & $Python "$PSScriptRoot/homework.py" --workspace $Work @args

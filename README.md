@@ -1,12 +1,13 @@
 # Lesson2HW Physics｜课后有题
 
+
 **上传板书、PPT或PDF课件，或说一句要求，生成贴合课堂的物理作业。**
 
 面向Codex、Claude Code、WorkBuddy等AI Agent的开源技能。老师无需自建题库、配置Python或填写本项目API Key；Agent使用内置题库索引，筛选已教范围内的题目，生成独立的学生卷和答案卷，供老师复核。
 
-**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.7/lesson2hw-physics-0.5.7-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.7/lesson2hw-physics-0.5.7-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.7)**
+**[下载通用技能包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.8/lesson2hw-physics-0.5.8-agent-skill.zip) · [下载WorkBuddy导入包](https://github.com/Laura-LLU/lesson2hw-physics/releases/download/v0.5.8/lesson2hw-physics-0.5.8-workbuddy.zip) · [版本与校验文件](https://github.com/Laura-LLU/lesson2hw-physics/releases/tag/v0.5.8)**
 
-当前为 **v0.5.7 Early Preview**。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
+当前为 **v0.5.8 Early Preview（自行实测版）**。目标约5分钟完成，略超可继续检查；不接受拖到10分钟以上。尚未证明所有Topic或所有Agent均满足耗时目标。格式和本地出卷已经检查，各Agent客户端的真实安装、板书/PPT理解与课堂效果尚未逐一验收。
 
 ## 老师只需一句话安装
 
@@ -42,7 +43,7 @@ GitHub访问受限时可由他人转交完整技能ZIP；首次环境准备与�
 | Cambridge AS & A Level Physics 9702 | 4,330题 | AS Paper1/2、A2 Paper4、实验Paper3/5 |
 | Cambridge IGCSE Physics 0625 | 2,256题 | 仅允许Paper2/4/6；当前有Paper2/4素材，Paper6尚缺素材 |
 
-完整分类索引随技能安装，共 **6,586题**。题目和答案图片从作者现有[公开题库网站](https://lauraphysics.com)按需校验并缓存，包内不含整套原卷或题图。首次使用需要联网；已缓存素材可复用，未缓存素材不能离线取得。网站可用性属于运行依赖。
+完整分类索引与用于检索的公开题目正文片段随技能安装，共 **6,586题**；正文片段不保证包含题目所有内容，选题仍须检查完整题答图片。题目和答案图片从作者现有[公开题库网站](https://lauraphysics.com)按需校验并缓存，包内不含整套原卷或题图。首次使用需要联网；已缓存素材可复用，未缓存素材不能离线取得。网站可用性属于运行依赖。
 
 0625出题严格限于Paper2、4、6，排除Paper1、3、5。普通理论作业使用2/4，实验任务只选6；题库缺少Paper6素材时如实说明，不能用其他卷替代。
 
@@ -75,11 +76,20 @@ Agent需要文件读写、命令执行、联网取题、完整图像阅读和PDF
 
 导出与[LauraPhysics.com](https://lauraphysics.com)保持同一版式：内缩深蓝标题卡与红线、英文学生卷/答案卷标识、姓名班级日期栏、简洁来源行、Laura-LLU品牌页脚及当前页/总页数。学生卷选择题之间额外保留约1.3厘米空白，答案卷保持紧凑；这是按教师要求对网站旧间距的调整。两门课程同题逐页对照已完成，详见[版式基准](docs/PDF版式与网站一致.md)。浏览器与本地字体渲染仍可能有细微差异。
 
+## v0.5.8提速改动
+
+- 四步日常流程，按需读取当前材料和少量候选，不重复加载整份历史或整库图片。
+- 9702 Topic1–25及0625 Topic1–6共用检索；跨考季同题干去重，保留已审核独立小问配方。
+- 新源图缺少裁图复核时拦截；长题分块预览，题答SHA绑定，返工另存版本。
+- 约5分钟是目标、10分钟是超时上限，首次安装、网络和模型等待均需如实说明；不能为提速省略质量检查。
+
 ## 验证状态
 
-已完成40项本地单元检查、通用Skill元数据检查、ZIP完整性和跨位置索引初始化。前身版本已在Mac空白工作目录自动准备环境，并分别用两门课程真实题答生成和查看作业/答案。本轮从通用技能ZIP换目录初始化两门题库索引；10份真实素材的本地出卷与逐页复核记录见测试状态。
+v0.5.8已完成64项本地回归与流程检查、通用Skill元数据检查、ZIP完整性和跨位置索引初始化。前身版本已在Mac空白工作目录自动准备环境，并分别用两门课程真实题答生成和查看作业/答案。本轮从通用技能ZIP换目录初始化两门题库索引；10份真实素材的本地出卷与逐页复核记录见测试状态。
 
-已用5份板书及5份PPT的指定页码模拟真实教师要求，分别出作业和答案并复核范围、题量、估算时长及全部页面；两例采用明确标注的独立小问节选。估算时长未经学生实测。详见[本轮测试](docs/测试状态.md)。
+v0.5.8重放旧10例得到20份PDF、76页，与原验收版比较排版未变；这是缓存复核重放，不代表完整出题耗时。三轮WorkBuddy真实测试仍存在超时或质量问题，尚无全Topic真实耗时通过结论，详见[本版验收边界](VALIDATION-058.md)。按作者要求先发布供自行实测，WorkBuddy商城包不更新。
+
+v0.5.7已用5份板书及5份PPT的指定页码模拟真实教师要求，分别出作业和答案并复核范围、题量、估算时长及全部页面；两例采用明确标注的独立小问节选。估算时长未经学生实测。详见[本轮测试](docs/测试状态.md)。
 
 尚未完成：各Agent客户端逐一实装、另一台Mac/Windows实机、各宿主独立运行的板书/PPT理解系统评测和课堂效果。不能把代码测试通过当作AI选题永远正确。详见[测试状态](docs/测试状态.md)。
 

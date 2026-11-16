@@ -149,6 +149,7 @@ def main():
     export.add_argument('--year',type=int,required=True);export.add_argument('--title',help='Short lesson topic; inferred from selected topics when omitted');export.add_argument('--checked',action='store_true')
     export.add_argument('--review-file',help='Agent-reviewed scope, requirements and paired layout geometry');export.add_argument('--output-dir');export.add_argument('--class-name',default='');export.add_argument('--student-name',default='');export.add_argument('--date',default=datetime.date.today().isoformat());export.add_argument('--time-limit',default='');export.add_argument('ids',nargs='+')
     plan=sub.add_parser('plan');plan.add_argument('--course',choices=PROFILES,required=True);plan.add_argument('--level',required=True);plan.add_argument('--review-file',required=True)
+    fetch=sub.add_parser('fetch');fetch.add_argument('--course',choices=PROFILES,required=True);fetch.add_argument('--level',required=True);fetch.add_argument('ids',nargs='+')
     info=sub.add_parser('info');info.add_argument('--course',choices=PROFILES,required=True)
     args=ap.parse_args();workspace=Path(args.workspace).expanduser().resolve()
     if args.cmd=='prepare':
@@ -187,10 +188,15 @@ def main():
             if pattern and not pattern.search(' '.join([r.get('search_text',''),*r['topics'],*r['subtopics']])):continue
             matches.append(r)
         matches.sort(key=lambda r:(r.get('year',0),r['id']),reverse=True)
-        from builtin_bank import ensure_assets
-        ensure_assets(matches[:max(0,args.limit)])
+        if not 1<=args.limit<=32:raise ValueError('Search limit must be 1-32. Search returns metadata only; use fetch for a small inspected shortlist.')
         print(json.dumps({'matches':len(matches),'candidates':matches[:max(0,args.limit)],
-                          'note':('当前题库没有0625 Paper 6素材，不能生成该卷；不得用其他卷替代。' if args.course=='0625' and args.level=='P6' and not any(r['paper']=='6' for r in rows) else 'Tags only shortlist. Inspect complete questions and answers against the lesson boundary.')},ensure_ascii=False,indent=2));return
+                          'media_downloaded':0,'note':('当前题库没有0625 Paper 6素材，不能生成该卷；不得用其他卷替代。' if args.course=='0625' and args.level=='P6' and not any(r['paper']=='6' for r in rows) else 'Tags only shortlist. Inspect complete questions and answers against the lesson boundary.')},ensure_ascii=False,indent=2));return
+    if args.cmd=='fetch':
+        if not 1<=len(args.ids)<=32:raise ValueError('Fetch 1-32 explicit candidate IDs, not a whole topic')
+        by_id={r['id']:r for r in rows};selected=[by_id[i] for i in args.ids]
+        if any(r['paper'] not in papers for r in selected):raise ValueError('Question paper does not match course/level')
+        from builtin_bank import ensure_assets
+        ensure_assets(selected);print(json.dumps({'candidates':selected},ensure_ascii=False,indent=2));return
     if not args.checked:raise ValueError('Inspect complete questions, answers and lesson boundaries first; then use --checked')
     if args.year not in PROFILES[args.course]['years']:raise ValueError('Syllabus year not supported by this course profile')
     if not 1<=len(args.ids)<=80 or len(args.ids)!=len(set(args.ids)):raise ValueError('Choose 1-80 unique IDs')
@@ -230,12 +236,13 @@ def main():
     out.mkdir(parents=True,exist_ok=True)
     metadata={'className':args.class_name,'studentName':args.student_name,'dueDate':args.date,'timeLimit':args.time_limit,'showSource':True,'totalMarks':sum(r['marks'] or 0 for r in selected),'marksIncomplete':sum(r['marks'] is None for r in selected)}
     # Stage both PDFs together. An unsafe layout must not leave a seemingly finished student paper.
-    import tempfile
+    # Keep the empty staging directory: routine generation never asks to delete files.
+    import uuid
+    staging=out/('.render-'+uuid.uuid4().hex[:10]);staging.mkdir()
     layout_audit={}
-    with tempfile.TemporaryDirectory(prefix='.render-',dir=out) as staging:
-        for answer,name in [(False,student_name),(True,answer_name)]:
-            layout_audit['answers' if answer else 'student']=pdf_engine.build_pdf(selected,Path(staging)/name,title,metadata,answer)
-        for name in [student_name,answer_name]:os.replace(Path(staging)/name,out/name)
+    for answer,name in [(False,student_name),(True,answer_name)]:
+        layout_audit['answers' if answer else 'student']=pdf_engine.build_pdf(selected,staging/name,title,metadata,answer)
+    for name in [student_name,answer_name]:(out/name).write_bytes((staging/name).read_bytes())
     selection={'course':args.course,'level':args.level,'syllabus_year':args.year,'title':title,'files':{'student':student_name,'answers':answer_name},'ids':args.ids,
                'sources':[r['source_ref'] for r in selected],'teacher_review_required':True,'requirements_check':validation,'layout_audit':layout_audit,'excerpts':[r['id'] for r in selected if r.get('excerpt')],
                'excerpt_details':[{'id':r['id'],'original_id':r.get('original_id'),'retained_parts':r.get('retained_parts'),'source_ref':r['source_ref'],'retained_marks':r['marks'],'independently_answerable':review['questions'][r['id']].get('independently_answerable') if args.review_file else None} for r in selected if r.get('excerpt')]}

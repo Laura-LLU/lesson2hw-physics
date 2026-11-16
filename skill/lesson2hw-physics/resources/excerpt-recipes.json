@@ -1,0 +1,244 @@
+{
+  "schema": 1,
+  "recipes": [
+    {
+      "id": "igcse-0625-2025-w-4-v1-q08-part-a",
+      "course": "0625",
+      "original_id": "igcse-0625-2025-w-4-v1-q08",
+      "retained_parts": "a",
+      "marks": 5,
+      "source_ref": "0625/4/O/N/25 v1 Q8 (a) [excerpt]",
+      "excerpt": true,
+      "independently_answerable_reviewed": true,
+      "review_version": "0.5.7",
+      "topics": [
+        "4 Electricity and magnetism"
+      ],
+      "subtopics": [
+        "4.1 Simple phenomena of magnetism",
+        "4.5 Electromagnetic effects"
+      ],
+      "difficulty": "medium",
+      "question_boxes": [
+        [
+          0.0,
+          0.0054286360551911335,
+          0.9374209860935525,
+          0.4338384980773581
+        ]
+      ],
+      "question_source_sha256": "724a10b46fe6fcb0a139870329a79778c13bcf6aa696bf5288c1cd1af8916982",
+      "question_output_sha256": "3d376f847b00ab5a107747d417066ab7f608b21e6a1bee8916548206e90a9b22",
+      "retrieval_text": "Fig. 8.1 shows a solenoid. (a) Fig. 8.1 Draw on Fig. 8.1 four complete magnetic field lines that show the pattern and direction of the magnetic field inside and outside the solenoid. [4] (ii) Mark a point inside the box in Fig. 8.1 where the magnetic field is strong. Label this point B. Explain how the diagram shows that the magnetic field is strong at B. explanation •. [1]",
+      "answer_boxes": [
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.24648359008707302
+        ]
+      ],
+      "answer_source_sha256": "3b77ae11328bd8a602e909a09c1726d80c0fe0aafd6fae99f03cccb224372d54",
+      "answer_output_sha256": "0788c2c2836b9bae31b3d93b6dd5bccf85378a4e05c92efc45f769c2ffa8524a"
+    },
+    {
+      "id": "igcse-0625-2022-w-4-v3-q11-part-a",
+      "course": "0625",
+      "original_id": "igcse-0625-2022-w-4-v3-q11",
+      "retained_parts": "a",
+      "marks": 3,
+      "source_ref": "0625/4/O/N/22 v3 Q11 (a) [excerpt]",
+      "excerpt": true,
+      "independently_answerable_reviewed": true,
+      "review_version": "0.5.7",
+      "topics": [
+        "4 Electricity and magnetism",
+        "1 Motion, forces and energy"
+      ],
+      "subtopics": [
+        "4.5 Electromagnetic effects",
+        "1.7 Energy, work and power",
+        "4.1 Simple phenomena of magnetism"
+      ],
+      "difficulty": "medium",
+      "question_boxes": [
+        [
+          0.0,
+          0.0,
+          0.9374209860935525,
+          0.3903107861060329
+        ]
+      ],
+      "question_source_sha256": "b734cfda8facbd8a09fdae4291735841b716c31798293842ddeb4db06d9801cd",
+      "question_output_sha256": "edd111e34699eac4932c5fc8f1f53f3735fcb9193b609c55a04ae12e53ce3a53",
+      "retrieval_text": "(a) Fig. 11.1 shows a solenoid connected to a battery. solenoid battery Fig. 11.1 On Fig. 11.1, draw the pattern of the magnetic field inside and around the solenoid. Indicate the direction of the magnetic field with an arrow. [3]",
+      "answer_boxes": [
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.5021428571428571
+        ]
+      ],
+      "answer_source_sha256": "3ecf48979dd41af74162817b953c43e1679e1f774dc9e8aed4719cf4ec445ac2",
+      "answer_output_sha256": "b676262e2d3cd99a4d3a0e5640edfa720b130c31bc94abd401c25fd61b03af59"
+    },
+    {
+      "id": "igcse-0625-2020-w-4-v2-q09-part-c",
+      "course": "0625",
+      "original_id": "igcse-0625-2020-w-4-v2-q09",
+      "retained_parts": "c",
+      "marks": 3,
+      "source_ref": "0625/4/O/N/20 v2 Q9 (c) [excerpt]",
+      "excerpt": true,
+      "independently_answerable_reviewed": true,
+      "review_version": "0.5.7",
+      "topics": [
+        "4 Electricity and magnetism"
+      ],
+      "subtopics": [
+        "4.1 Simple phenomena of magnetism"
+      ],
+      "difficulty": "medium",
+      "question_boxes": [
+        [
+          0.0,
+          0.5023814924019052,
+          0.9374209860935525,
+          0.7983669766386936
+        ]
+      ],
+      "question_source_sha256": "56fa8943437bb595c52025d9399ea06b5de78360773842f655a46b66ed634219",
+      "question_output_sha256": "e544e82b930d06f4675b15c8fc41b9412f72283116f35ca396d1f94889863ddc",
+      "retrieval_text": "(c) Fig. 9.2 represents a current in a wire. The current is into the plane of the paper. (i) Draw the pattern of the magnetic field produced around the wire. Show clearly the direction of the magnetic field. Fig. 9.2 [2] (ii) The direction of the current in the wire is reversed. The magnitude of the current is unchanged. State the effect that reversing the current has on the magnetic field produced. .... [1]",
+      "answer_boxes": [
+        [
+          0.0,
+          0.49698593436034827,
+          1.0,
+          0.6443402545210984
+        ]
+      ],
+      "answer_source_sha256": "8191e7f72aeb622deb6220a824e9ddec030f7ff50ce6e3b296a0a596f870e3e7",
+      "answer_output_sha256": "3f93d00a31ad2f9662bb376d467ee68dd7a4bd16d017d532019c842671f83582"
+    },
+    {
+      "id": "9702_s25_43_q08-part-a-b",
+      "course": "9702",
+      "original_id": "9702_s25_43_q08",
+      "retained_parts": "a-b",
+      "marks": 3,
+      "source_ref": "9702/43/M/J/25 Q8 (a-b) [excerpt]",
+      "excerpt": true,
+      "independently_answerable_reviewed": true,
+      "review_version": "0.5.7",
+      "topics": [
+        "Topic 22 · Quantum physics"
+      ],
+      "subtopics": [
+        "22F · de Broglie wavelength"
+      ],
+      "difficulty": "hard",
+      "question_boxes": [
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.21489428841905964
+        ]
+      ],
+      "question_source_sha256": "3c37757df081e550ea56d3c81be89345874bbaa9dcb81ec3aab0c36513e9b1c6",
+      "question_output_sha256": "6581e8b01c76f9dba8a401f7f1627b30af789d11a035290070e5e5f147b8eb21",
+      "retrieval_text": "8 (a) State what is meant by the de Broglie wavelength. ... [1] (b) Calculate the de Broglie wavelength of an electron moving at a speed of 4.9 x 107 ms-1. wavelength = …m [2]",
+      "answer_boxes": [
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.11390811831340465
+        ]
+      ],
+      "answer_source_sha256": "0b46993091e9772e4880f16b5289af4872e85322d80f36cd9f4dd46f435ce94c",
+      "answer_output_sha256": "9f70969b96606e9b96833b2fa3b28ad242700450c077806400328e3723ab7096"
+    },
+    {
+      "id": "9702_w24_42_q09-part-d",
+      "course": "9702",
+      "original_id": "9702_w24_42_q09",
+      "retained_parts": "d",
+      "marks": 3,
+      "source_ref": "9702/42/O/N/24 Q9 (d) [excerpt]",
+      "excerpt": true,
+      "independently_answerable_reviewed": true,
+      "review_version": "0.5.7",
+      "topics": [
+        "Topic 22 · Quantum physics"
+      ],
+      "subtopics": [
+        "22F · de Broglie wavelength"
+      ],
+      "difficulty": "hard",
+      "question_boxes": [
+        [
+          0.0,
+          0.5849324804548686,
+          1.0,
+          0.9481165600568585
+        ]
+      ],
+      "question_source_sha256": "f304e90c17a0b17d2ff886b9ed4bfec1c848201999ff00c36fd9013efd16ac6a",
+      "question_output_sha256": "f8a202b14b84b020fe9ec96f5432a545d4eeadda4bed4206993d942e8ffc5276",
+      "retrieval_text": "(d) The electrons are now accelerated through different values of V, resulting in pairs of corresponding values for p and the de Broglie wavelength 2. On Fig. 9.1, sketch the variation of p with 7 p O- Fig. 9.1 [2] (ii) State the name of the quantity represented by the gradient of the line in Fig. 9.1. [1]",
+      "answer_boxes": [
+        [
+          0.0,
+          0.34484924623115576,
+          1.0,
+          0.4899497487437186
+        ]
+      ],
+      "answer_source_sha256": "8bd6e72bc148a2dff9a22aa72aa2e8bac2669e425c19d7f417432e78a8d861d8",
+      "answer_output_sha256": "00a3752771c25ae8d6837c7a83e8295dcd12041db8cf6dcfce44405414c81b69"
+    },
+    {
+      "id": "9702_w17_42_q10-part-b",
+      "course": "9702",
+      "original_id": "9702_w17_42_q10",
+      "retained_parts": "b",
+      "marks": 2,
+      "source_ref": "9702/42/O/N/17 Q10 (b) [excerpt]",
+      "excerpt": true,
+      "independently_answerable_reviewed": true,
+      "review_version": "0.5.7",
+      "topics": [
+        "Topic 22 · Quantum physics"
+      ],
+      "subtopics": [
+        "22D · Photoelectric equation",
+        "22F · de Broglie wavelength"
+      ],
+      "difficulty": "medium",
+      "question_boxes": [
+        [
+          0.0,
+          0.4902353530295443,
+          1.0,
+          0.9539308963445168
+        ]
+      ],
+      "question_source_sha256": "3357d80570a4c23248e52edf507921f4ac7a205280bcf613851690645443caf1",
+      "question_output_sha256": "0b58f6f92ab011e8a1593bf410e86dff712c811e8ae615214469a15e413b0c68",
+      "retrieval_text": "(b) A neutron is moving in a straight line with momentum p. The de Broglie wavelength associated with this neutron is 2. On Fig. 10.2, sketch the variation with momentum p of the de Broglie wavelength A. p Fig. 10.2 [2]",
+      "answer_boxes": [
+        [
+          0.0,
+          0.32051282051282054,
+          1.0,
+          0.5102564102564102
+        ]
+      ],
+      "answer_source_sha256": "d5a86170587e645928e7f63c153a4f529bc6c606835e5b5ff165926f995fea6a",
+      "answer_output_sha256": "8e14854c5f1b30a7b7a806b80c3a8e885766c82d4ae79edde21c6c8e1204e877"
+    }
+  ]
+}

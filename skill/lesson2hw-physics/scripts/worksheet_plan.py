@@ -37,7 +37,12 @@ def validate_review(course,level,rows,review):
     if minutes is not None:
         if type(minutes) not in (int,float) or not math.isfinite(minutes) or minutes<=0:raise ValueError('Invalid requested duration')
         if abs(estimated-minutes)>minutes*.10:failures.append(f'Estimated {estimated:g} minutes outside target {minutes:g} +/-10%')
-    return {'passed':not failures,'counts':counts,'complete_original_structured':sum(r['kind']=='structured' and not r.get('excerpt') for r in rows),'excerpt_groups':sum(bool(r.get('excerpt')) for r in rows),'estimated_minutes':estimated,'requested_minutes':minutes,'duration_tolerance':.10,'failures':failures,'estimate_is_heuristic':True,'scope_truth_requires_visual_review':True}
+    section_estimates={}
+    for kind,target in req.get('minutes_by_kind',{}).items():
+        if kind not in counts or type(target) not in (int,float) or not math.isfinite(target) or target<=0:raise ValueError('Invalid section duration')
+        section_estimates[kind]=estimate_minutes(course,level,[r for r in rows if r['kind']==kind])
+        if abs(section_estimates[kind]-target)>target*.10:failures.append(f'{kind}: estimated {section_estimates[kind]:g} minutes outside target {target:g} +/-10%')
+    return {'passed':not failures,'counts':counts,'section_estimated_minutes':section_estimates,'complete_original_structured':sum(r['kind']=='structured' and not r.get('excerpt') for r in rows),'excerpt_groups':sum(bool(r.get('excerpt')) for r in rows),'estimated_minutes':estimated,'requested_minutes':minutes,'duration_tolerance':.10,'failures':failures,'estimate_is_heuristic':True,'scope_truth_requires_visual_review':True}
 
 def choose_plan(course,level,rows,review):
     """Select only already-reviewed candidates; never expand the lesson boundary."""
@@ -47,7 +52,7 @@ def choose_plan(course,level,rows,review):
         except ValueError:continue
         if review.get('requirements',{}).get('whole_questions_only') and r.get('excerpt'):continue
         eligible.append(r)
-    req=review.get('requirements',{});target=req.get('minutes')
+    req=review.get('requirements',{});target=req.get('minutes') or sum(req.get('minutes_by_kind',{}).values())
     if not target:
         wanted=req.get('counts',{});chosen=[]
         for kind in ['mcq','structured']:
@@ -66,9 +71,13 @@ def choose_plan(course,level,rows,review):
     for (m,s,t),indices in states.items():
         if req.get('mixed') and not(m and s):continue
         if any((m if k=='mcq' else s)!=v for k,v in req.get('counts',{}).items()):continue
-        valid.append((abs(t-target*20),len(indices),indices))
+        section_times={'mcq':m*(1.25 if course=='0625' else 1.5),'structured':t/20-m*(1.25 if course=='0625' else 1.5)}
+        if any(abs(section_times[k]-v)>v*.10+1e-8 for k,v in req.get('minutes_by_kind',{}).items()):continue
+        if abs(t/20-target)>target*.1+1e-8:continue
+        section_error=sum(abs(section_times[k]-v) for k,v in req.get('minutes_by_kind',{}).items())
+        valid.append((section_error,abs(t-target*20),len(indices),indices))
     if not valid:return [],{'passed':False,'failures':['No reviewed selection meets requested counts/time'],'estimate_is_heuristic':True}
-    _,_,indices=min(valid);chosen=[eligible[i] for i in indices]
+    _,_,_,indices=min(valid);chosen=[eligible[i] for i in indices]
     return chosen,validate_review(course,level,chosen,review)
 
 

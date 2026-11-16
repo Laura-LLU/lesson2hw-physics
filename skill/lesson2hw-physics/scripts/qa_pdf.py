@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import re
+import pdfplumber
 from pathlib import Path
 
 import pypdfium2 as pdfium
@@ -35,14 +37,28 @@ def render_pdf(path: Path, output_dir: Path, write_pages: bool = True):
     sheet.save(contact, quality=92)
     reader = PdfReader(str(path))
     text_lengths = [len(page.extract_text() or "") for page in reader.pages]
+    labels=[];structural=[]
+    course='0625' if path.name.startswith('0625') else '9702'
+    with pdfplumber.open(path) as document_text:
+        for number,page in enumerate(document_text.pages,1):
+            text=page.extract_text() or ''
+            if 'Laura-LLU | github.com/Laura-LLU' not in text:structural.append(f'page {number}: missing brand footer')
+            if f'{number}/{len(document_text.pages)}' not in text:structural.append(f'page {number}: wrong page total')
+            if course+' Physics' not in text:structural.append(f'page {number}: missing course header/footer')
+            labels.extend(int(m) for m in re.findall(r'(?:^|\n)(\d+)\.\s',text))
+            for image in page.images:
+                if image['top']<30 or image['bottom']>page.height-37.8:structural.append(f'page {number}: body outside safe bounds')
+    if labels!=list(range(1,len(labels)+1)):structural.append('non-contiguous question numbering')
     return {
+        "question_labels":labels,
+        "structural_errors":structural,
         "pdf": str(path),
         "pages": len(document),
         "bytes": path.stat().st_size,
         "contact_sheet": str(contact),
         "ink_coverage": coverage,
         "text_lengths": text_lengths,
-        "warnings": [
+        "warnings": structural + [
             f"page {i + 1} may be nearly blank" for i, value in enumerate(coverage) if value < 0.008
         ],
     }

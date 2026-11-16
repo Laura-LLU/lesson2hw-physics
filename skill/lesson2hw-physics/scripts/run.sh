@@ -9,7 +9,7 @@ export UV_PYTHON_INSTALL_DIR="$WORK/.python"
 export UV_PYTHON_BIN_DIR="$WORK/.tools"
 export TMPDIR="$WORK/tmp"
 PY="$WORK/.venv/bin/python"
-if [ ! -x "$PY" ] || ! "$PY" -c 'import PIL,pypdf,pdfplumber,reportlab,pypdfium2' >/dev/null 2>&1; then
+if [ ! -x "$PY" ] || ! "$PY" -c 'import importlib.util,sys; sys.exit(not all(importlib.util.find_spec(m) for m in ["PIL","pypdf","pdfplumber","reportlab","pypdfium2"]))' >/dev/null 2>&1; then
   echo '首次使用：正在自动准备独立运行环境，不修改系统Python，也不需要API Key。' >&2
   UV="$WORK/.tools/uv"
   if [ ! -x "$UV" ]; then
@@ -22,6 +22,10 @@ if [ ! -x "$PY" ] || ! "$PY" -c 'import PIL,pypdf,pdfplumber,reportlab,pypdfium2
   fi
   if [ ! -x "$PY" ]; then "$UV" venv --python 3.12 "$WORK/.venv" >&2; fi
   "$UV" pip install --python "$PY" -r "$SCRIPT_DIR/requirements.txt" >&2
+fi
+if [ "${1:-}" = "fast" ]; then
+  shift
+  exec "$PY" "$SCRIPT_DIR/fast.py" --workspace "$WORK" "$@"
 fi
 if [ "${1:-}" = "qa" ]; then
   shift
